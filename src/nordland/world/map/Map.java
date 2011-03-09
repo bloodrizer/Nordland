@@ -16,7 +16,7 @@ import nordland.world.map.Tile;
 public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
-    private Tile[][][] tiles = new Tile[1000][1000][1000];
+    private Tile[][][] tiles = new Tile[300][300][300];
 
     private Chunk[][] chunks = new Chunk[3][3];
 
@@ -43,14 +43,22 @@ public class Map {
             for (int z=j*Chunk.CHUNK_SIZE; z<(j+1)*Chunk.CHUNK_SIZE; z++){
 
                 //tiles.put(new Vector3(x,0,z),new Tile(new Vector3(x,0,z)));
-                tiles[x][0][z] = new Tile(new Vector3(x,0,z));
+                //tiles[x][0][z] = new Tile(new Vector3(x,0,z));
+                Vector3 origin = new Vector3(x,0,z);
+                set_tile(origin,    new Tile(origin) );
             }
 
 
 
 
-        System.out.println(get_tile(0,0,0));
+        //System.out.println(get_tile(0,0,0));
         //exit();
+    }
+
+    public void set_tile(Vector3 origin, Tile tile){
+
+        origin = V3world2local(origin);
+        tiles[origin.x()][origin.y()][origin.z()] = tile;
     }
 
     public static Vector3 vec_key = new Vector3(0,0,0);
@@ -63,14 +71,23 @@ public class Map {
         //    return tiles.get(key);
         //}
         //return tiles.get(vec_key);
-
+        x = x + (3*Chunk.CHUNK_SIZE);
+        y = y + (3*Chunk.CHUNK_SIZE);
+        z = z + (3*Chunk.CHUNK_SIZE);
 
         return tiles[x][y][z];
         //return null;
 
     }
 
-    public Vector3 V3world2local(int x, int y, int z) {
-        return null;
+    public Vector3 V3world2local(Vector3 world) {
+
+        world.set(
+                    world.x() + (3*Chunk.CHUNK_SIZE),
+                    world.y() + (3*Chunk.CHUNK_SIZE),
+                    world.z() + (3*Chunk.CHUNK_SIZE)
+                );
+
+        return world;
     }
 }
