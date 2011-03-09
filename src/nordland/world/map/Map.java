@@ -17,7 +17,7 @@ public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
     //private static Tile[][][] tiles = new Tile[200][200][200];
-    private static Tile[][][] tiles = new Tile[200][200][200];
+    public static Tile[][][] tiles = new Tile[200][200][200];
 
     private Chunk[][] chunks = new Chunk[3][3];
 

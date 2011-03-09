@@ -74,13 +74,15 @@ public class Voxel {
         GL11.glScalef(0.5f,0.5f,0.5f);
 
         GL11.glBegin(GL11.GL_QUADS);
-        texture.bind(); // or GL11.glBind(texture.getTextureID());
+        //texture.bind(); // or GL11.glBind(texture.getTextureID());
         
          float tx = get_texture_x();
          float ty = get_texture_y();
          float ts = get_texture_size();
 
          // Front Face
+ 
+
          GL11.glTexCoord2f(tx, ty);
          GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
          GL11.glTexCoord2f(tx+ts, ty);
@@ -88,7 +90,7 @@ public class Voxel {
          GL11.glTexCoord2f(tx+ts, ty+ts);
          GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
          GL11.glTexCoord2f(tx, ty+ts);
-         
+  
       
          GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Left Of The Texture and Quad                // Back Face
          GL11.glTexCoord2f(tx+ts, ty);
@@ -135,6 +137,7 @@ public class Voxel {
          GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
          GL11.glTexCoord2f(tx, ty+ts);
          GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
+
          GL11.glEnd();
 
         GL11.glPopMatrix();

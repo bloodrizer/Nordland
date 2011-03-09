@@ -17,6 +17,7 @@ import org.lwjgl.util.glu.GLU;
 import nordland.render.Voxel;
 import nordland.util.math.Vector3;
 import nordland.world.map.Tile;
+import nordland.world.map.Chunk;
 import nordland.world.World;
 
 /**
@@ -70,6 +71,7 @@ public class Render {
     }
 
     //==========================================================================
+    //public static Tile[][][] tiles = new Tile[200][200][200];
 
     public void render_all() {
         
@@ -86,6 +88,8 @@ public class Render {
 
         Tile __tile = null;
 
+        
+
         for (int x=-60; x< 60; x++)
             for (int y=-60; y< 60; y++)
                 for (int z=-60; z<60; z++){
@@ -93,7 +97,15 @@ public class Render {
 
                 __tile = World.getInstance().game_map.get_tile(x, y, z);
 
-                if (__tile != null){
+                /*int i = x + (3*Chunk.CHUNK_SIZE);
+                int j = y + (3*Chunk.CHUNK_SIZE);
+                int k = z + (3*Chunk.CHUNK_SIZE);*/
+
+                //__tile = World.getInstance().game_map.tiles[i][j][k];
+                //__tile = tiles[i][j][k];
+
+
+               if (__tile != null){
                     voxel_render.tile_id = __tile.tile_type;
                     voxel_render.set_origin(x,y,z);
                     voxel_render.render();
