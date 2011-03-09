@@ -16,7 +16,8 @@ import nordland.world.map.Tile;
 public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
-    private Tile[][][] tiles = new Tile[300][300][300];
+    //private static Tile[][][] tiles = new Tile[200][200][200];
+    private static Tile[][][] tiles = new Tile[200][200][200];
 
     private Chunk[][] chunks = new Chunk[3][3];
 

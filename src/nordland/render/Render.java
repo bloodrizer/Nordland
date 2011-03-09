@@ -94,9 +94,7 @@ public class Render {
                 __tile = World.getInstance().game_map.get_tile(x, y, z);
 
                 if (__tile != null){
-
                     voxel_render.tile_id = __tile.tile_type;
-
                     voxel_render.set_origin(x,y,z);
                     voxel_render.render();
 
