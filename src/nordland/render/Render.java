@@ -43,7 +43,7 @@ public class Render {
 
         initGL();
 
-        testvoxel = new Voxel();
+        testvoxel = new Voxel(0.0f, 0.0f, 0.0f);
         testvoxel.init();
     }
 
@@ -73,10 +73,10 @@ public class Render {
 
         //GL11.glLoadIdentity();
 
-        GL11.glTranslatef(0.0f,0.0f,-5.0f);                              // Move Into The Screen 5 Units
-        GL11.glRotatef(26,1.0f,0.0f,0.0f);                        // Rotate On The X Axis
-        GL11.glRotatef(26,0.0f,1.0f,0.0f);                        // Rotate On The Y Axis
-        GL11.glRotatef(26,0.0f,0.0f,1.0f);                        // Rotate On The Z Axis
+        GL11.glTranslatef(0.0f,-3.0f,-10.0f);                              // Move Into The Screen 5 Units
+        //GL11.glRotatef(26,1.0f,0.0f,0.0f);                        // Rotate On The X Axis
+        //GL11.glRotatef(26,0.0f,1.0f,0.0f);                        // Rotate On The Y Axis
+        //GL11.glRotatef(26,0.0f,0.0f,1.0f);                        // Rotate On The Z Axis
 
         
         testvoxel.render();
