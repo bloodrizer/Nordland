@@ -6,9 +6,14 @@
 package nordland;
 
 import org.lwjgl.opengl.Display;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.Sys;
 
 import nordland.render.Render;
+import nordland.render.Camera;
+
+import org.lwjgl.opengl.GL11;
 /**
  *
  * @author red
@@ -56,11 +61,73 @@ public class Main {
    public void run(){
       getDelta();
       lastFPS = (int)Sys.getTime();
-      while(!Display.isCloseRequested()) {
 
-          updateFPS();
-          RENDER.render_all();
+      Camera camera = new Camera(0, 0, 0);
 
+      float dx        = 0.0f;
+      float dy        = 0.0f;
+      float dt        = 0.0f; //length of frame
+      float lastTime  = 0.0f; // when the last frame was
+      float time      = 0.0f;
+
+      float mouseSensitivity = 0.05f;
+      float movementSpeed = 10.0f; //move 10 units per second
+
+        //hide the mouse
+      Mouse.setGrabbed(true);
+
+      while (!Display.isCloseRequested() &&
+                !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+      {
+
+            updateFPS();
+
+
+
+            time = Sys.getTime();
+            dt = (time - lastTime)/1000.0f;
+            lastTime = time;
+
+
+            //distance in mouse movement from the last getDX() call.
+            dx = Mouse.getDX();
+            //distance in mouse movement from the last getDY() call.
+            dy = -Mouse.getDY();
+
+            //controll camera yaw from x movement fromt the mouse
+            camera.yaw(dx * mouseSensitivity);
+            //controll camera pitch from y movement fromt the mouse
+            camera.pitch(dy * mouseSensitivity);
+
+
+            //when passing in the distrance to move
+            //we times the movementSpeed with dt this is a time scale
+            //so if its a slow frame u move more then a fast frame
+            //so on a slow computer you move just as fast as on a fast computer
+            if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
+            {
+                camera.walkForward(movementSpeed*dt);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_S))//move backwards
+            {
+                camera.walkBackwards(movementSpeed*dt);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_A))//strafe left
+            {
+                camera.strafeLeft(movementSpeed*dt);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_D))//strafe right
+            {
+                camera.strafeRight(movementSpeed*dt);
+            }
+
+            //set the modelview matrix back to the identity
+            GL11.glLoadIdentity();
+            //look through the camera before you draw anything
+            camera.setMatrix();
+            //you would draw your scene here.
+
+            RENDER.render_all();
           
           Display.update();
           Display.sync(60);
