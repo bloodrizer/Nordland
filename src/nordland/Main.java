@@ -10,6 +10,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.Sys;
 
+import nordland.world.World;
 import nordland.render.Render;
 import nordland.render.Camera;
 
@@ -25,6 +26,8 @@ public class Main {
   long lastFrame;
 
     public static final Render RENDER = Render.getInstance();
+    public static final World WORLD = World.getInstance();
+    public static final Input INPUT = Input.getInstance();
 
     /**
      * @param args the command line arguments
@@ -71,7 +74,7 @@ public class Main {
       float time      = 0.0f;
 
       float mouseSensitivity = 0.05f;
-      float movementSpeed = 10.0f; //move 10 units per second
+      float movementSpeed = 1.0f; //move 10 units per second
 
         //hide the mouse
       Mouse.setGrabbed(true);
@@ -104,22 +107,21 @@ public class Main {
             //we times the movementSpeed with dt this is a time scale
             //so if its a slow frame u move more then a fast frame
             //so on a slow computer you move just as fast as on a fast computer
-            if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
+            //Keyboard.poll();
+
+            INPUT.poll();
+
+            float movement_amt = 0.25f;
+
+            if (INPUT.key_state_w){ camera.walkForward(movement_amt); }
+            if (INPUT.key_state_s){ camera.walkBackwards(movement_amt); }
+            if (INPUT.key_state_a){ camera.strafeLeft(movement_amt); }
+            if (INPUT.key_state_d){ camera.strafeRight(movement_amt); }
+
+            /*if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
             {
                 camera.walkForward(movementSpeed*dt);
-            }
-            if (Keyboard.isKeyDown(Keyboard.KEY_S))//move backwards
-            {
-                camera.walkBackwards(movementSpeed*dt);
-            }
-            if (Keyboard.isKeyDown(Keyboard.KEY_A))//strafe left
-            {
-                camera.strafeLeft(movementSpeed*dt);
-            }
-            if (Keyboard.isKeyDown(Keyboard.KEY_D))//strafe right
-            {
-                camera.strafeRight(movementSpeed*dt);
-            }
+            }*/
 
             //set the modelview matrix back to the identity
             GL11.glLoadIdentity();
