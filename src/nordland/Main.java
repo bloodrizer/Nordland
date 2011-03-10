@@ -132,7 +132,7 @@ public class Main {
             RENDER.render_all();
           
           Display.update();
-          Display.sync(60);
+          //Display.sync(60);
 
         }
   }

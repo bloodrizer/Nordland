@@ -18,11 +18,14 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.nio.ByteBuffer;
+
 /**
  *
  * @author red
  */
 public class Voxel {
+
     public static final float VOXEL_SIZE = 1.0f;
 
     public Texture texture;
@@ -46,13 +49,14 @@ public class Voxel {
     }
 
     public void init(){
-        try {
+        /*try {
             texture = TextureLoader.getTexture("PNG", new FileInputStream("Data/terrain.png"));
         }
         catch (IOException ex) {
              Logger.getLogger(Voxel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
+
 
     public float get_texture_size(){
         return 1.0f / 16;
@@ -64,6 +68,29 @@ public class Voxel {
 
     public float get_texture_y(){
         return 1.0f / 16 * (tile_id %16);
+    }
+
+
+
+    //fill vbo buffer with voxel coord data
+    public void build_vbo(VBO vbo){
+         float tx = get_texture_x();
+         float ty = get_texture_y();
+         float ts = get_texture_size();
+
+         put_vertex(-1.0f, 1.0f, -3.0f, vbo);
+         put_vertex(1.0f, 1.0f, -3.0f, vbo);
+         put_vertex(1.0f, -1.0f, -3.0f, vbo);
+         put_vertex(-1.0f, -1.0f, -3.0f, vbo);
+
+    }
+
+    public void put_vertex(float x, float y, float z, VBO vbo){
+         vbo.vertexPositionAttributes.putFloat(x);
+         vbo.vertexPositionAttributes.putFloat(y);
+         vbo.vertexPositionAttributes.putFloat(z);
+
+         vbo.vertexIndecies.putInt(vbo.vertex_index++);
     }
 
     public void render(){

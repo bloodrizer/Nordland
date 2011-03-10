@@ -8,17 +8,25 @@ package nordland.render;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.ARBVertexBufferObject;
 
 import org.lwjgl.LWJGLException;
 
-import org.lwjgl.opengl.GL11;
+
 import org.lwjgl.util.glu.GLU;
 
+
 import nordland.render.Voxel;
+import nordland.render.VBO;
+
 import nordland.util.math.Vector3;
 import nordland.world.map.Tile;
 import nordland.world.map.Chunk;
 import nordland.world.World;
+
+
 
 /**
  *
@@ -26,6 +34,8 @@ import nordland.world.World;
  */
 public class Render {
     private static final Render INSTANCE = new Render();
+
+    private static final VBO vbo = new VBO();
 
     public static final int DISPLAY_HEIGHT = 480;
     public static final int DISPLAY_WIDTH = 640;
@@ -45,8 +55,14 @@ public class Render {
         Display.setFullscreen(false);
         Display.setTitle("JSKiller");
         Display.create();
-
+        
+        if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object == false) {
+            throw new RuntimeException("OpenGL Vertex Buffer Objects are not supported by Graphics Card. Unable to run program.");
+        }
         initGL();
+
+        vbo.init();
+        vbo.rebuild();
 
         voxel_render = new Voxel(0.0f, 0.0f, 0.0f);
         voxel_render.init();
@@ -73,48 +89,17 @@ public class Render {
     //==========================================================================
     //public static Tile[][][] tiles = new Tile[200][200][200];
 
+    public void rebuild_vbo() {
+        
+         vbo.rebuild();
+    }
+
     public void render_all() {
         
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-
-        //GL11.glLoadIdentity();
-
         GL11.glTranslatef(0.0f,-4.0f,-10.0f);                              // Move Into The Screen 5 Units
-        //GL11.glRotatef(26,1.0f,0.0f,0.0f);                        // Rotate On The X Axis
-        //GL11.glRotatef(26,0.0f,1.0f,0.0f);                        // Rotate On The Y Axis
-        //GL11.glRotatef(26,0.0f,0.0f,1.0f);                        // Rotate On The Z Axis
 
-        //int i = tiles.get(new Vector3(0,0,0));
+        vbo.render();
 
-        Tile __tile = null;
-
-        
-
-        for (int x=-60; x< 60; x++)
-            for (int y=-60; y< 60; y++)
-                for (int z=-60; z<60; z++){
-
-
-                __tile = World.getInstance().game_map.get_tile(x, y, z);
-
-                /*int i = x + (3*Chunk.CHUNK_SIZE);
-                int j = y + (3*Chunk.CHUNK_SIZE);
-                int k = z + (3*Chunk.CHUNK_SIZE);*/
-
-                //__tile = World.getInstance().game_map.tiles[i][j][k];
-                //__tile = tiles[i][j][k];
-
-
-               if (__tile != null){
-                    voxel_render.tile_id = __tile.tile_type;
-                    voxel_render.set_origin(x,y,z);
-                    voxel_render.render();
-
-                }
-
-            }
-
-        
-        //testvoxel.render();
     }
 }
