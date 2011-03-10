@@ -61,6 +61,16 @@ public class Camera {
         position.z += distance * (float)Math.cos(Math.toRadians(yaw+90));
     }
 
+    public void lift(float distance)
+    {
+        position.y -= distance;
+    }
+
+    public void dive(float distance)
+    {
+        position.y += distance;
+    }
+
     //translates and rotate the matrix so that it looks through the camera
     //this dose basic what setMatrix() does
     public void setMatrix()

@@ -105,9 +105,9 @@ public class VBO {
         
 
         //1.7m iterations
-        for (int x=-60; x< 60; x++)
-            for (int y=-60; y< 60; y++)
-                for (int z=-60; z<60; z++){
+        for (int x=-30; x< 30; x++)
+            for (int y=-30; y< 30; y++)
+                for (int z=-30; z<30; z++){
                     __tile = World.getInstance().game_map.get_tile(x, y, z);
                     if (__tile != null){
 

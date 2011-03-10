@@ -118,10 +118,14 @@ public class Main {
             if (INPUT.key_state_a){ camera.strafeLeft(movement_amt); }
             if (INPUT.key_state_d){ camera.strafeRight(movement_amt); }
 
-            /*if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
+            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))//move forward
             {
-                camera.walkForward(movementSpeed*dt);
-            }*/
+                camera.lift(movement_amt);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_C))//move forward
+            {
+                camera.dive(movement_amt);
+            }
 
             //set the modelview matrix back to the identity
             GL11.glLoadIdentity();
@@ -132,7 +136,7 @@ public class Main {
             RENDER.render_all();
           
           Display.update();
-          //Display.sync(60);
+          Display.sync(120);
 
         }
   }
