@@ -72,6 +72,7 @@ public class Render {
 
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
+        GL11.glFrustum(-1, 1, -1, 1, -1, 1000);
 //        Calculate the aspect ratio of the window
         GLU.gluPerspective(45.0f,((float)DISPLAY_WIDTH)/((float)DISPLAY_HEIGHT),0.1f,100.0f);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);

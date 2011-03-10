@@ -73,6 +73,8 @@ public class Voxel {
 
 
     //fill vbo buffer with voxel coord data
+    public static VBO _vbo = null;
+
     public void build_vbo(VBO vbo){
          float tx = get_texture_x();
          float ty = get_texture_y();
@@ -85,84 +87,57 @@ public class Voxel {
          float  z = origin.z*voxel_size;
 
          
-         /*put_vertex(-1.0f, 1.0f, -3.0f, vbo);
-         put_vertex(1.0f, 1.0f, -3.0f, vbo);
-         put_vertex(1.0f, -1.0f, -3.0f, vbo);
-         put_vertex(-1.0f, -1.0f, -3.0f, vbo);*/
+         _vbo = vbo;
+         //back
+         put_vertex(-1.0f + x, -1.0f + y, 1.0f + z, tx, ty);
+         put_vertex( 1.0f + x, -1.0f + y, 1.0f + z, tx +ts, ty);
+         put_vertex( 1.0f + x, 1.0f + y,  1.0f + z, tx +ts, ty + ts);
+         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z, tx, ty + ts);
+
+         //top
+         put_vertex(-1.0f + x, -1.0f + y,  -1.0f + z, tx+ts, ty);
+         put_vertex(-1.0f + x,  1.0f + y,  -1.0f + z, tx+ts, ty+ts);
+         put_vertex( 1.0f + x, 1.0f + y,  -1.0f + z,  tx,    ty+ts);
+         put_vertex(1.0f + x,  -1.0f + y,  -1.0f + z, tx,    ty);
+
+         //bottom
+         put_vertex(-1.0f + x, 1.0f + y,  -1.0f + z, tx , ty+ts);
+         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z,  tx, ty);
+         put_vertex( 1.0f + x, 1.0f + y,  1.0f + z,  tx+ts, ty);
+         put_vertex( 1.0f + x, 1.0f + y,  -1.0f + z, tx+ts, ty+ts);
+
+            
+         //right
+         put_vertex(-1.0f + x, -1.0f + y,  -1.0f + z, tx+ts, ty+ts);
+         put_vertex(1.0f + x,  -1.0f + y,  -1.0f + z, tx, ty+ts);
+         put_vertex( 1.0f + x, -1.0f + y,  1.0f + z,  tx, ty);
+         put_vertex( -1.0f + x, -1.0f + y, 1.0f + z,  tx+ts, ty);
+
          
+         //left
+         put_vertex(1.0f + x, -1.0f + y, -1.0f + z, tx+ts, ty);
+         put_vertex(1.0f + x, 1.0f + y,  -1.0f + z, tx+ts, ty+ts);
+         put_vertex(1.0f + x, 1.0f + y,  1.0f + z,  tx, ty+ts);
+         put_vertex(1.0f + x, -1.0f + y, 1.0f + z,  tx, ty);
 
-
-         put_vertex(-1.0f + x, -1.0f + y, 1.0f + z, vbo);
-         put_vertex( 1.0f + x, -1.0f + y, 1.0f + z, vbo);
-         put_vertex( 1.0f + x, 1.0f + y,  1.0f + z, vbo);
-         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z, vbo);
-
-         /*
-         GL11.glTexCoord2f(tx, ty);
-         GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty);
-         GL11.glVertex3f( 1.0f, -1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty+ts);
-         GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty+ts);
-         */
-
-
-         GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Left Of The Texture and Quad                // Back Face
-         GL11.glTexCoord2f(tx+ts, ty);
-
-         GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Bottom Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty+ts);
-         GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty+ts);
-         GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty);
-         GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Bottom Left Of The Texture and Quad                // Top Face
-
-         GL11.glTexCoord2f(tx, ty+ts);
-         GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty);
-         GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty);
-         GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty+ts);
-         GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad                // Bottom Face
-
-         GL11.glTexCoord2f(tx+ts, ty+ts);
-         GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Top Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty+ts);
-         GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Top Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty);
-         GL11.glVertex3f( 1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty);
-         GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Right Of The Texture and Quad                // Right face
-
-         GL11.glTexCoord2f(tx+ts, ty);
-         GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Bottom Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty+ts);
-         GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty+ts);
-         GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Top Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty);
-         GL11.glVertex3f( 1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad                // Left Face
-
-         GL11.glTexCoord2f(tx, ty);
-         GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Bottom Left Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty);
-         GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx+ts, ty+ts);
-         GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
-         GL11.glTexCoord2f(tx, ty+ts);
-         GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
+         //front?
+         put_vertex(-1.0f + x, -1.0f + y, -1.0f + z,    tx, ty);
+         put_vertex(-1.0f + x, -1.0f + y, 1.0f + z,     tx+ts, ty);
+         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z,     tx+ts, ty+ts);
+         put_vertex(-1.0f + x, 1.0f + y,  -1.0f + z,    tx, ty+ts);
 
     }
 
-    public void put_vertex(float x, float y, float z, VBO vbo){
-         vbo.vertexPositionAttributes.putFloat(x);
-         vbo.vertexPositionAttributes.putFloat(y);
-         vbo.vertexPositionAttributes.putFloat(z);
+    public void put_vertex(float x, float y, float z, float tx, float ty){
+         _vbo.vertexPositionAttributes.putFloat(x);
+         _vbo.vertexPositionAttributes.putFloat(y);
+         _vbo.vertexPositionAttributes.putFloat(z);
 
-         vbo.vertexIndecies.putInt(vbo.vertex_index++);
+         _vbo.vertexPositionAttributes.putFloat(tx);
+         _vbo.vertexPositionAttributes.putFloat(ty);
+
+
+         _vbo.vertexIndecies.putInt(_vbo.vertex_index++);
     }
 
     public void render(){
@@ -189,9 +164,8 @@ public class Voxel {
          GL11.glTexCoord2f(tx+ts, ty+ts);
          GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
          GL11.glTexCoord2f(tx, ty+ts);
-  
-      
          GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Left Of The Texture and Quad                // Back Face
+
          GL11.glTexCoord2f(tx+ts, ty);
          GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Bottom Right Of The Texture and Quad
          GL11.glTexCoord2f(tx+ts, ty+ts);
@@ -199,8 +173,8 @@ public class Voxel {
          GL11.glTexCoord2f(tx, ty+ts);
          GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
          GL11.glTexCoord2f(tx, ty);
-         
          GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Bottom Left Of The Texture and Quad                // Top Face
+
          GL11.glTexCoord2f(tx, ty+ts);
          GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
          GL11.glTexCoord2f(tx, ty);
@@ -208,8 +182,8 @@ public class Voxel {
          GL11.glTexCoord2f(tx+ts, ty);
          GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
          GL11.glTexCoord2f(tx+ts, ty+ts);
-         
          GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad                // Bottom Face
+
          GL11.glTexCoord2f(tx+ts, ty+ts);
          GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Top Right Of The Texture and Quad
          GL11.glTexCoord2f(tx, ty+ts);

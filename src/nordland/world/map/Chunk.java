@@ -11,6 +11,6 @@ package nordland.world.map;
  */
 public class Chunk {
 
-    public static final int CHUNK_SIZE = 30;
+    public static final int CHUNK_SIZE = 64;
 
 }

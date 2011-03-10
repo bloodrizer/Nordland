@@ -17,9 +17,12 @@ public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
     //private static Tile[][][] tiles = new Tile[200][200][200];
-    public static Tile[][][] tiles = new Tile[200][200][200];
+    static int ChunksetSize = 3;
+    static int TilesetSize = Chunk.CHUNK_SIZE * ChunksetSize;
 
-    private Chunk[][] chunks = new Chunk[3][3];
+    public static Tile[][][] tiles = new Tile[TilesetSize][TilesetSize][TilesetSize];
+
+    private Chunk[][][] chunks = new Chunk[ChunksetSize][ChunksetSize][ChunksetSize];
 
 
     public Map(){
