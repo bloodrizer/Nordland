@@ -77,74 +77,30 @@ public class VBO {
 
     public void rebuild(){
 
+
+        totalVertecies = 30*30*30 * 4 * 6;  //x*y*z* 4 per side * 6 sidex
         preload();
 
         Tile __tile = null;
         
 
         //1.7m iterations
-        /*for (int x=-60; x< 60; x++)
-            for (int y=-60; y< 60; y++)
-                for (int z=-60; z<60; z++){
+        for (int x=-30; x< 30; x++)
+            for (int y=-30; y< 30; y++)
+                for (int z=-30; z<30; z++){
                     __tile = World.getInstance().game_map.get_tile(x, y, z);
+                    if (__tile != null){
 
-                    voxel_render.set_origin(x, y, z);
-                    voxel_render.tile_id = __tile.tile_type;
-                    voxel_render.build_vbo(this);
-                }
-        */
-
-        //voxel_render.set_origin(0, 0, 0);
-        //voxel_render.tile_id = __tile.tile_type;
-        
-
-        /*vertexPositionAttributes.putFloat(-1.0f);
-        vertexPositionAttributes.putFloat(1.0f);
-        vertexPositionAttributes.putFloat(-3.0f);
-
-        // vertex index 1
-
-        vertexPositionAttributes.putFloat(1.0f);
-        vertexPositionAttributes.putFloat(1.0f);
-        vertexPositionAttributes.putFloat(-3.0f);
-
-        // vertex index 2
-        vertexPositionAttributes.putFloat(1.0f);
-        vertexPositionAttributes.putFloat(-1.0f);
-        vertexPositionAttributes.putFloat(-3.0f);
-
-        // vertex index 3
-        vertexPositionAttributes.putFloat(-1.0f);
-        vertexPositionAttributes.putFloat(-1.0f);
-        vertexPositionAttributes.putFloat(-3.0f);*/
-
-        //vertexPositionAttributes.flip();
-
-        //release vbo after we bind it
-        /*
-
-        vertexIndecies.putInt(0);
-        vertexIndecies.putInt(1);
-        vertexIndecies.putInt(2);
-        vertexIndecies.putInt(3);
-
-        //vertexIndecies.flip();*/
-
-        //voxel_render.vbo = this;
-        /*try {
-            Texture texture = TextureLoader.getTexture("PNG", new FileInputStream("Data/terrain.png"));
-            voxel_render.build_vbo();
+                        voxel_render.set_origin(x, y, z);
+                        //voxel_render.tile_id = __tile.tile_type;
+                        voxel_render.build_vbo(this);
+                    }
         }
-        catch (IOException ex) {
-            
-        }*/
-        voxel_render.build_vbo(this);
-
-        /*vertexIndecies.putInt(0);
-        vertexIndecies.putInt(1);
-        vertexIndecies.putInt(2);
-        vertexIndecies.putInt(3);*/
         
+
+        /*voxel_render.build_vbo(this);
+        voxel_render.set_origin(1, 0, 0);
+        voxel_render.build_vbo(this);*/
 
         unload();
     }

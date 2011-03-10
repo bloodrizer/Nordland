@@ -78,10 +78,82 @@ public class Voxel {
          float ty = get_texture_y();
          float ts = get_texture_size();
 
-         put_vertex(-1.0f, 1.0f, -3.0f, vbo);
+         float voxel_size = 2.0f;
+
+         float  x = origin.x*voxel_size;
+         float  y = origin.y*voxel_size;
+         float  z = origin.z*voxel_size;
+
+         
+         /*put_vertex(-1.0f, 1.0f, -3.0f, vbo);
          put_vertex(1.0f, 1.0f, -3.0f, vbo);
          put_vertex(1.0f, -1.0f, -3.0f, vbo);
-         put_vertex(-1.0f, -1.0f, -3.0f, vbo);
+         put_vertex(-1.0f, -1.0f, -3.0f, vbo);*/
+         
+
+
+         put_vertex(-1.0f + x, -1.0f + y, 1.0f + z, vbo);
+         put_vertex( 1.0f + x, -1.0f + y, 1.0f + z, vbo);
+         put_vertex( 1.0f + x, 1.0f + y,  1.0f + z, vbo);
+         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z, vbo);
+
+         /*
+         GL11.glTexCoord2f(tx, ty);
+         GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty);
+         GL11.glVertex3f( 1.0f, -1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty+ts);
+         GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty+ts);
+         */
+
+
+         GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Left Of The Texture and Quad                // Back Face
+         GL11.glTexCoord2f(tx+ts, ty);
+
+         GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Bottom Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty+ts);
+         GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty+ts);
+         GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty);
+         GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Bottom Left Of The Texture and Quad                // Top Face
+
+         GL11.glTexCoord2f(tx, ty+ts);
+         GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty);
+         GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty);
+         GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty+ts);
+         GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad                // Bottom Face
+
+         GL11.glTexCoord2f(tx+ts, ty+ts);
+         GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Top Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty+ts);
+         GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Top Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty);
+         GL11.glVertex3f( 1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty);
+         GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Right Of The Texture and Quad                // Right face
+
+         GL11.glTexCoord2f(tx+ts, ty);
+         GL11.glVertex3f( 1.0f, -1.0f, -1.0f);   // Bottom Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty+ts);
+         GL11.glVertex3f( 1.0f,  1.0f, -1.0f);   // Top Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty+ts);
+         GL11.glVertex3f( 1.0f,  1.0f,  1.0f);   // Top Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty);
+         GL11.glVertex3f( 1.0f, -1.0f,  1.0f);   // Bottom Left Of The Texture and Quad                // Left Face
+
+         GL11.glTexCoord2f(tx, ty);
+         GL11.glVertex3f(-1.0f, -1.0f, -1.0f);   // Bottom Left Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty);
+         GL11.glVertex3f(-1.0f, -1.0f,  1.0f);   // Bottom Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx+ts, ty+ts);
+         GL11.glVertex3f(-1.0f,  1.0f,  1.0f);   // Top Right Of The Texture and Quad
+         GL11.glTexCoord2f(tx, ty+ts);
+         GL11.glVertex3f(-1.0f,  1.0f, -1.0f);   // Top Left Of The Texture and Quad
 
     }
 
