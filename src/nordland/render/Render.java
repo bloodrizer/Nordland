@@ -26,6 +26,8 @@ import nordland.world.map.Tile;
 import nordland.world.map.Chunk;
 import nordland.world.World;
 
+import nordland.render.overlay.OverlaySystem;
+
 
 
 /**
@@ -36,6 +38,7 @@ public class Render {
     private static final Render INSTANCE = new Render();
 
     private static final VBO vbo = new VBO();
+    private static OverlaySystem overlay = null;
 
     public static final int DISPLAY_HEIGHT = 480;
     public static final int DISPLAY_WIDTH = 640;
@@ -66,6 +69,9 @@ public class Render {
 
         voxel_render = new Voxel(0.0f, 0.0f, 0.0f);
         voxel_render.init();
+
+
+        overlay = OverlaySystem.getInstance();
     }
 
     public void initGL(){
@@ -101,6 +107,7 @@ public class Render {
         GL11.glTranslatef(0.0f,-4.0f,-10.0f);                              // Move Into The Screen 5 Units
 
         vbo.render();
+        overlay.render();
 
     }
 }

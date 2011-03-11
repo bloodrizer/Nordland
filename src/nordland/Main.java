@@ -12,6 +12,7 @@ import org.lwjgl.Sys;
 
 import nordland.world.World;
 import nordland.render.Render;
+import nordland.render.overlay.OverlaySystem;
 import nordland.render.Camera;
 
 import org.lwjgl.opengl.GL11;
@@ -22,7 +23,7 @@ import org.lwjgl.opengl.GL11;
 public class Main {
     
   int fps;
-  int lastFPS;
+  long lastFPS;
   long lastFrame;
 
     public static final Render RENDER = Render.getInstance();
@@ -63,7 +64,7 @@ public class Main {
 
    public void run(){
       getDelta();
-      lastFPS = (int)Sys.getTime();
+      lastFPS = getTime();
 
       Camera camera = new Camera(0, 0, 0);
 
@@ -87,7 +88,7 @@ public class Main {
 
 
 
-            time = Sys.getTime();
+            time = getTime();
             dt = (time - lastTime)/1000.0f;
             lastTime = time;
 
@@ -127,6 +128,8 @@ public class Main {
                 camera.dive(movement_amt);
             }
 
+            OverlaySystem.getInstance().debug.position = camera.position;
+
             //set the modelview matrix back to the identity
             GL11.glLoadIdentity();
             //look through the camera before you draw anything
@@ -136,13 +139,17 @@ public class Main {
             RENDER.render_all();
           
           Display.update();
-          Display.sync(120);
+          //Display.sync(120);
 
         }
   }
 
+  public long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+  }
+
   public int getDelta() {
-    long time = Sys.getTime();
+    long time = getTime();
     int delta = (int) (time - lastFrame);
     lastFrame = time;
 
@@ -150,8 +157,10 @@ public class Main {
 }
 
   public void updateFPS() {
-    if (Sys.getTime() - lastFPS > 1000) {
-        Display.setTitle("FPS: " + fps);
+    if (getTime() - lastFPS > 1000) {
+        //Display.setTitle("FPS: " + fps);
+
+        OverlaySystem.getInstance().debug.fps = fps;
 	fps = 0;
 	lastFPS += 1000;
     }
