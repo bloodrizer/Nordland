@@ -32,13 +32,13 @@ public final class Vector3 {
 	private volatile int hashCode;
 
 	/** The x component of this vector. */
-	private int x;
+	public int x;
 
 	/** The y component of this vector. */
-	private int y;
+	public int y;
 
 	/** The z component of this vector. */
-	private int z;
+	public int z;
 
 	/**
 	 * @param x

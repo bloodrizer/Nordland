@@ -9,6 +9,7 @@ package nordland.render;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 
@@ -16,6 +17,7 @@ import org.lwjgl.LWJGLException;
 
 
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Vector3f;
 
 
 import nordland.render.Voxel;
@@ -26,6 +28,11 @@ import nordland.world.map.Tile;
 import nordland.world.map.Chunk;
 import nordland.world.World;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.ByteOrder;
+
+import org.lwjgl.input.Mouse;
 
 
 /**
@@ -35,12 +42,15 @@ import nordland.world.World;
 public class Render {
     private static final Render INSTANCE = new Render();
 
-    private static final VBO vbo = new VBO();
+    public static final VBO vbo = new VBO();
 
     public static final int DISPLAY_HEIGHT = 480;
     public static final int DISPLAY_WIDTH = 640;
 
-    public Voxel voxel_render;
+    public Vector3f cursor_position = new Vector3f(0.0f, 0.0f, 0.0f);
+    public Vector3f mouse_position = new Vector3f(0.0f, 0.0f, 0.0f);
+
+    public Voxel voxel_render ;
 
     private Render() {
 
@@ -95,12 +105,48 @@ public class Render {
          vbo.rebuild();
     }
 
+
+    private float lightAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    private float lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f }; 
+    private float lightPosition[] = { 1.0f, 1.0f, 0.0f, 0.1f };
+    float lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
     public void render_all() {
         
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-        GL11.glTranslatef(0.0f,-4.0f,-10.0f);                              // Move Into The Screen 5 Units
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
+    GL11.glTranslatef(0.0f,-2.0f,0.0f);                              // Move Into The Screen 5 Units
+
+    /*ByteBuffer temp = ByteBuffer.allocateDirect(16);
+    temp.order(ByteOrder.nativeOrder());
+    GL11.glLight(GL11.GL_LIGHT1, GL11.GL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(lightAmbient).flip());
+    GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(lightDiffuse).flip());
+    GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION,(FloatBuffer)temp.asFloatBuffer().put(lightPosition).flip());
+    GL11.glEnable(GL11.GL_LIGHT1);
+    GL11.glEnable(GL11.GL_LIGHTING);
+
+    GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+    GL11.glColorMaterial ( GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE ) ;*/
 
         vbo.render();
+
+        //Mouse.getX(),Mouse.getY()
+        FloatBuffer World_Ray = Raycast.getMousePosition(320,200);
+            int wx = (int)World_Ray.get(0);
+            int wy = (int)World_Ray.get(1);
+            int wz = (int)World_Ray.get(2);
+
+        Display.setTitle("FPS: 0"
+            + " WX: " + Integer.toString(wx)
+            + " WY: " + Integer.toString(wy)
+            + " WZ: " + Integer.toString(wz)
+        );
+
+        //cursor_position.set(wx,wy,wz);
+
+        //render aim cursor
+        voxel_render.tile_id = 8;
+        voxel_render.set_origin(wx , wy, wz);
+        voxel_render.render();
 
     }
 }

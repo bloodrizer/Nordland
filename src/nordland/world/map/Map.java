@@ -42,7 +42,7 @@ public class Map {
     public void build_chunk(int i, int j){
 
         for (int x= i*Chunk.CHUNK_SIZE; x< (i+1)*Chunk.CHUNK_SIZE; x++)
-            for (int y= -1*Chunk.CHUNK_SIZE; y< 0*Chunk.CHUNK_SIZE; y++)
+                for (int y= -1*Chunk.CHUNK_SIZE; y<= 0*Chunk.CHUNK_SIZE; y++)
                 for (int z=j*Chunk.CHUNK_SIZE; z<(j+1)*Chunk.CHUNK_SIZE; z++){
 
                 Vector3 origin = new Vector3(x,y,z);
@@ -61,7 +61,7 @@ public class Map {
         tiles[origin.x()][origin.y()][origin.z()] = tile;
     }
 
-    public static Vector3 vec_key = new Vector3(0,0,0);
+    public static Vector3 util_v3 = new Vector3(0,0,0);
 
     public Tile get_tile( int x, int y, int z) {
         //vec_key.set(x,y,z);
@@ -82,6 +82,36 @@ public class Map {
         return tiles[x][y][z];
         //return null;
 
+    }
+
+
+    public void drop_tile( int x, int y, int z) {
+
+        Tile tile = null;
+
+        util_v3.set(x,y,z);
+        util_v3 = V3world2local(util_v3);
+
+        if ((tiles[util_v3.x][util_v3.y][util_v3.z]) != null){
+            tiles[util_v3.x][util_v3.y][util_v3.z] = null;
+        }
+        if ((tile = get_tile(x-1,y,z)) != null){
+            tile.rv = true;
+        }
+        if ((tile = get_tile(x+1,y,z)) != null){
+            tile.lv = true;
+        }
+
+        
+        /*x = x + (3*Chunk.CHUNK_SIZE);
+        y = y + (3*Chunk.CHUNK_SIZE);
+        z = z + (3*Chunk.CHUNK_SIZE);
+
+        tiles[x][y][z] = null;*/
+        /*tiles[x-1][y][z].rv = true;
+        tiles[x+1][y][z].lv = true;*/
+        /*tiles[x][y-1][z].bv = true;
+        tiles[x][y-1][z].bv = true;*/
     }
 
     public Vector3 V3world2local(Vector3 world) {
