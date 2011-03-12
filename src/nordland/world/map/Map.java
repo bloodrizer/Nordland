@@ -17,7 +17,9 @@ public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
     //private static Tile[][][] tiles = new Tile[200][200][200];
-    public static Tile[][][] tiles = new Tile[200][200][200];
+    int tile_count = 0;
+
+    public static Tile[][][] tiles = new Tile[255][255][255];
 
     private Chunk[][] chunks = new Chunk[3][3];
 
@@ -28,32 +30,29 @@ public class Map {
 
     public void build_all(){
 
-        for (int i = -3; i<3; i++)
-            for (int j = -3; j<3; j++)
+        for (int i = -1; i<0; i++)
+            for (int j = -1; j<0; j++)
             {
                build_chunk(i,j);
             }
+
+        System.out.println("Builded " + Integer.toString(tile_count)+ " tiles");
     }
 
     public void build_chunk(int i, int j){
-        //HOLY CRAP IT WORKS!
-        //tiles.put(new Vector3(0,0,0),1);
-        //int i = tiles.get(new Vector3(0,0,0));
 
         for (int x= i*Chunk.CHUNK_SIZE; x< (i+1)*Chunk.CHUNK_SIZE; x++)
-            for (int z=j*Chunk.CHUNK_SIZE; z<(j+1)*Chunk.CHUNK_SIZE; z++){
+            for (int y= -1*Chunk.CHUNK_SIZE; y< 0*Chunk.CHUNK_SIZE; y++)
+                for (int z=j*Chunk.CHUNK_SIZE; z<(j+1)*Chunk.CHUNK_SIZE; z++){
 
-                //tiles.put(new Vector3(x,0,z),new Tile(new Vector3(x,0,z)));
-                //tiles[x][0][z] = new Tile(new Vector3(x,0,z));
-                Vector3 origin = new Vector3(x,0,z);
-                set_tile(origin,    new Tile(origin) );
+                Vector3 origin = new Vector3(x,y,z);
+                Tile tmp_tile = new Tile(origin);
+
+                set_tile(origin, tmp_tile);
+
+                tile_count++;  
             }
 
-
-
-
-        //System.out.println(get_tile(0,0,0));
-        //exit();
     }
 
     public void set_tile(Vector3 origin, Tile tile){
@@ -76,6 +75,10 @@ public class Map {
         y = y + (3*Chunk.CHUNK_SIZE);
         z = z + (3*Chunk.CHUNK_SIZE);
 
+
+        /*if (x>=0 && y>=0 && z>=0){
+            return tiles[x][y][z];
+        }*/
         return tiles[x][y][z];
         //return null;
 

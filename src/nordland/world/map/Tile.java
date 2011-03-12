@@ -16,6 +16,14 @@ public class Tile {
     public int tile_type = 1;
 
 
+    //public boolean[] visible_sides = new boolean[6];    //which side is visible and which is not
+    public boolean lv = true;
+    public boolean rv = true;
+    public boolean tv = true;
+    public boolean bv = true;
+    public boolean fv = true;
+    public boolean kv = true;
+
 
     public Tile(Vector3 position){
         this.position = position;
