@@ -21,10 +21,11 @@ public class Raycast {
 
    static public FloatBuffer getMousePosition(int mouseX, int mouseY)
     {
-        IntBuffer viewport = BufferUtils.createIntBuffer(16);
+        IntBuffer viewport = BufferUtils.createIntBuffer(4);
         FloatBuffer modelview = BufferUtils.createFloatBuffer(16);
         FloatBuffer projection = BufferUtils.createFloatBuffer(16);
-        FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
+        //FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
+        
         float winX, winY;
         FloatBuffer position = BufferUtils.createFloatBuffer(3);
 
