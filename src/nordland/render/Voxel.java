@@ -152,12 +152,19 @@ public class Voxel {
             return; //safe switch
         }
 
+        //#hacky safe switch
+        // HACK HACK HACK
+
+        //if (_vbo.vertexPositionAttributes != null) {
+            
          _vbo.vertexPositionAttributes.putFloat(x);
          _vbo.vertexPositionAttributes.putFloat(y);
          _vbo.vertexPositionAttributes.putFloat(z);
 
          _vbo.vertexPositionAttributes.putFloat(tx);
          _vbo.vertexPositionAttributes.putFloat(ty);
+
+       //}
 
 
          _vbo.vertexIndecies.putInt(_vbo.vertex_index++);

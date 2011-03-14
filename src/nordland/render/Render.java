@@ -46,7 +46,7 @@ import org.lwjgl.input.Mouse;
 public class Render {
     private static final Render INSTANCE = new Render();
 
-    public static final VBO vbo = new VBO();
+    public static VBO vbo = new VBO();
     private static OverlaySystem overlay = null;
 
     public static final int DISPLAY_HEIGHT = 480;

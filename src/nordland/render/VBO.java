@@ -11,6 +11,8 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.BufferUtils;
@@ -29,9 +31,8 @@ import java.io.IOException;
  */
 public class VBO {
    
-    int vboVertexAttributes;
-    int vboVertexIndecies;
-    int vboTextureAttributes;
+    int vboid_data = 0;
+    int vboid_index = 0;
 
     static int totalNumberOfAxis = 3;
     static int floatSize = 4;
@@ -51,16 +52,11 @@ public class VBO {
         
     }
 
-    //public static final  int VBO_max_buffer_size = GL12.GL_MAX_ELEMENTS_INDICES;     //dark magic
     public static final  int VBO_max_buffer_size = 64*64*64 * 4 * 6 ;
     public static int       VBO_buffer_size = 0;
 
-    //same shit, refactored version
-
     public static int createVBOID() {
-        IntBuffer buffer = BufferUtils.createIntBuffer(1);
-        ARBVertexBufferObject.glGenBuffersARB(buffer);
-        return buffer.get(0);
+        return ARBVertexBufferObject.glGenBuffersARB();
     }
 
     //prepair VBO buffer and get a pointer to it
@@ -69,24 +65,34 @@ public class VBO {
         ARBVertexBufferObject.glBindBufferARB(TYPE, vbo_id);
         ARBVertexBufferObject.glBufferDataARB(TYPE, size, ARBVertexBufferObject.GL_STATIC_DRAW_ARB);
 
-        return  ARBVertexBufferObject.glMapBufferARB( TYPE, ARBVertexBufferObject.GL_WRITE_ONLY_ARB,size, null);
+        return  ARBVertexBufferObject.glMapBufferARB( TYPE, ARBVertexBufferObject.GL_WRITE_ONLY_ARB, size, null);
     }
 
     //--------------------------------------------------------------------------
     public void preload(){
-        vboVertexAttributes     = createVBOID();
-        vboVertexIndecies       = createVBOID();
-        vboTextureAttributes    = createVBOID();
 
+        if (vboid_data != 0){
+            ARBVertexBufferObject.glDeleteBuffersARB(vboid_data);
+        }
+        if (vboid_index != 0){
+            ARBVertexBufferObject.glDeleteBuffersARB(vboid_index);
+        }
 
-        vertexPositionAttributes    = precache_bufferData( vboVertexAttributes,
+        vboid_data  =   createVBOID();
+        vboid_index = createVBOID();
+
+        vertexPositionAttributes    = precache_bufferData( vboid_data,
                 ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vertexPositionAttributeSize * VBO_max_buffer_size);
+        if (vertexPositionAttributes == null){
+            System.out.println("Failed to create vertex buffer");
+            System.out.println(GL11.glGetError());
+            return;
+        }
         
 
         //----------------------------------------------------------------------
         vertexIndexSize = 4;
-
-        vertexIndecies = precache_bufferData(vboVertexIndecies,
+        vertexIndecies = precache_bufferData(vboid_index,
                 ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB,vertexIndexSize * VBO_max_buffer_size
                 );
 
@@ -105,9 +111,7 @@ public class VBO {
 
     public void rebuild(){
 
-        long vbo_build_start = System.nanoTime();
-
-        vertex_index = 0;   //important!
+        vertex_index = 0;
         VBO_buffer_size = 0;
 
         preload();
@@ -117,7 +121,8 @@ public class VBO {
 
         //1.7m iterations
         
-
+        long vbo_build_start = System.nanoTime();
+        
         for (int x=-32; x< 32; x++)
             for (int y=-32; y< 32; y++)
                 for (int z=-32; z<32; z++){
@@ -170,14 +175,13 @@ public class VBO {
     public void unload(){
 
         vertexPositionAttributes.flip();
-
         ARBVertexBufferObject.glUnmapBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB);
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, 0);
 
         vertexIndecies.flip();
-
         ARBVertexBufferObject.glUnmapBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB);
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
     }
 
 
@@ -187,8 +191,8 @@ public class VBO {
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboVertexAttributes);
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboVertexIndecies);
+        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboid_data);
+        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboid_index);
         
         int stride = (3+2) * 4;   //3 vertex + 2 texture
         
@@ -198,10 +202,10 @@ public class VBO {
         // 3 vertex coord * size of float
         offset = 3 * 4;
         GL11.glTexCoordPointer(2, GL11.GL_FLOAT, stride, offset);
-
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboVertexIndecies);
-
         GL11.glDrawElements(GL11.GL_QUADS, VBO_buffer_size, GL11.GL_UNSIGNED_INT,0);
+
+        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, 0);
+	ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
