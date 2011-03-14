@@ -21,10 +21,10 @@ public class Raycast {
 
    static public FloatBuffer getMousePosition(int mouseX, int mouseY)
     {
-        IntBuffer viewport = BufferUtils.createIntBuffer(4);
+        IntBuffer viewport = BufferUtils.createIntBuffer(16);
         FloatBuffer modelview = BufferUtils.createFloatBuffer(16);
         FloatBuffer projection = BufferUtils.createFloatBuffer(16);
-        //FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
+        FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
         
         float winX, winY;
         FloatBuffer position = BufferUtils.createFloatBuffer(3);
@@ -36,9 +36,9 @@ public class Raycast {
         winX = (float)mouseX;
         winY = (float)viewport.get(3) - (float)mouseY;
 
-        //GL11.glReadPixels(320, 200, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
+        GL11.glReadPixels(320, 200, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
 
-        GLU.gluUnProject(winX, winY, 1.0f, modelview, projection, viewport, position);
+        GLU.gluUnProject(winX, winY, winZ.get(), modelview, projection, viewport, position);
 
         return position;
     }

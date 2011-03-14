@@ -22,6 +22,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import nordland.render.Voxel;
 import nordland.render.VBO;
+//import nordland.render.Picking;
 
 import nordland.util.math.Vector3;
 import nordland.world.map.Tile;
@@ -31,6 +32,8 @@ import nordland.world.World;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.ByteOrder;
+
+import java.util.List;
 
 import org.lwjgl.input.Mouse;
 
@@ -129,7 +132,6 @@ public class Render {
 
         vbo.render();
 
-        //Mouse.getX(),Mouse.getY()
         FloatBuffer World_Ray = Raycast.getMousePosition(320,200);
             int wx = (int)World_Ray.get(0);
             int wy = (int)World_Ray.get(1);
@@ -143,8 +145,10 @@ public class Render {
 
         //cursor_position.set(wx,wy,wz);
 
+        //List<Integer> hits = Picking.end();
+
         //render aim cursor
-        voxel_render.tile_id = 8;
+        voxel_render.tile_id = 6;
         voxel_render.set_origin(wx , wy, wz);
         voxel_render.render();
 
