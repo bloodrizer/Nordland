@@ -95,11 +95,13 @@ public class VBO {
         vertexIndecies = precache_bufferData(vboid_index,
                 ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB,vertexIndexSize * VBO_max_buffer_size
                 );
-
+        
+        
         try {
             texture = TextureLoader.getTexture("PNG", new FileInputStream("Data/terrain.png"));
         }
         catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -186,7 +188,11 @@ public class VBO {
 
 
     public void render(){
-        texture.bind();
+        if (texture != null){
+            texture.bind();
+        }else{
+            //System.out.println("Panic flee!");
+        }
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);

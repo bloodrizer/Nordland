@@ -1,0 +1,1 @@
+java -classpath C:\DEV\Northland\Nordland\dist\getdown-tools-1.2.jar com.threerings.getdown.tools.Digester C:\DEV\Northland\Nordland\dist
