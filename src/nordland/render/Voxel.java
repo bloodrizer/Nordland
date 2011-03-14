@@ -20,6 +20,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.nio.ByteBuffer;
 
+import nordland.world.map.Tile;
+
 /**
  *
  * @author red
@@ -67,7 +69,7 @@ public class Voxel {
     }
 
     public float get_texture_y(){
-        return 1.0f / 16 * (tile_id %16);
+        return 1.0f / 16 * (tile_id % 16 );
     }
 
 
@@ -75,60 +77,81 @@ public class Voxel {
     //fill vbo buffer with voxel coord data
     public static VBO _vbo = null;
 
-    public void build_vbo(VBO vbo){
+    public void build_vbo(VBO vbo, Tile tile){
          float tx = get_texture_x();
          float ty = get_texture_y();
          float ts = get_texture_size();
 
-         float voxel_size = 2.0f;
+         float vo = VOXEL_SIZE/2;
 
-         float  x = origin.x*voxel_size;
-         float  y = origin.y*voxel_size;
-         float  z = origin.z*voxel_size;
+         float  x = origin.x*VOXEL_SIZE;
+         float  y = origin.y*VOXEL_SIZE;
+         float  z = origin.z*VOXEL_SIZE;
 
          
          _vbo = vbo;
+
+        //put_vertex(-1.0f + x, -1.0f + y, 1.0f + z, tx, ty);
+
+
+        //f k l r t b
+         //front
+         if (tile.fv) {
+             put_vertex(-vo + x, -vo + y, vo + z, tx, ty);
+             put_vertex( vo + x, -vo + y, vo + z, tx +ts, ty);
+             put_vertex( vo + x, vo + y,  vo + z, tx +ts, ty + ts);
+             put_vertex(-vo + x, vo + y,  vo + z, tx, ty + ts);
+        }
          //back
-         put_vertex(-1.0f + x, -1.0f + y, 1.0f + z, tx, ty);
-         put_vertex( 1.0f + x, -1.0f + y, 1.0f + z, tx +ts, ty);
-         put_vertex( 1.0f + x, 1.0f + y,  1.0f + z, tx +ts, ty + ts);
-         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z, tx, ty + ts);
+         if (tile.kv) {
+             put_vertex(-vo + x, -vo + y,  -vo + z, tx+ts, ty);
+             put_vertex(-vo + x,  vo + y,  -vo + z, tx+ts, ty+ts);
+             put_vertex( vo + x, vo + y,  -vo + z,  tx,    ty+ts);
+             put_vertex(vo + x,  -vo + y,  -vo + z, tx,    ty);
+        }
 
-         //top
-         put_vertex(-1.0f + x, -1.0f + y,  -1.0f + z, tx+ts, ty);
-         put_vertex(-1.0f + x,  1.0f + y,  -1.0f + z, tx+ts, ty+ts);
-         put_vertex( 1.0f + x, 1.0f + y,  -1.0f + z,  tx,    ty+ts);
-         put_vertex(1.0f + x,  -1.0f + y,  -1.0f + z, tx,    ty);
-
-         //bottom
-         put_vertex(-1.0f + x, 1.0f + y,  -1.0f + z, tx , ty+ts);
-         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z,  tx, ty);
-         put_vertex( 1.0f + x, 1.0f + y,  1.0f + z,  tx+ts, ty);
-         put_vertex( 1.0f + x, 1.0f + y,  -1.0f + z, tx+ts, ty+ts);
+         //*top*
+         if (tile.tv) {
+             put_vertex(-vo + x, vo + y,  -vo + z, tx , ty+ts);
+             put_vertex(-vo + x, vo + y,  vo + z,  tx, ty);
+             put_vertex( vo + x, vo + y,  vo + z,  tx+ts, ty);
+             put_vertex( vo + x, vo + y,  -vo + z, tx+ts, ty+ts);
+        }
 
             
-         //right
-         put_vertex(-1.0f + x, -1.0f + y,  -1.0f + z, tx+ts, ty+ts);
-         put_vertex(1.0f + x,  -1.0f + y,  -1.0f + z, tx, ty+ts);
-         put_vertex( 1.0f + x, -1.0f + y,  1.0f + z,  tx, ty);
-         put_vertex( -1.0f + x, -1.0f + y, 1.0f + z,  tx+ts, ty);
+         //*bottom*
+         if (tile.bv) {
+            put_vertex(-vo + x, -vo + y,  -vo + z, tx+ts, ty+ts);
+            put_vertex(vo + x,  -vo + y,  -vo + z, tx, ty+ts);
+            put_vertex( vo + x, -vo + y,  vo + z,  tx, ty);
+            put_vertex( -vo + x, -vo + y, vo + z,  tx+ts, ty);
+        }
 
          
-         //left
-         put_vertex(1.0f + x, -1.0f + y, -1.0f + z, tx+ts, ty);
-         put_vertex(1.0f + x, 1.0f + y,  -1.0f + z, tx+ts, ty+ts);
-         put_vertex(1.0f + x, 1.0f + y,  1.0f + z,  tx, ty+ts);
-         put_vertex(1.0f + x, -1.0f + y, 1.0f + z,  tx, ty);
+         //right
+         if (tile.rv) {
+            put_vertex(vo + x, -vo + y, -vo + z, tx+ts, ty);
+            put_vertex(vo + x, vo + y,  -vo + z, tx+ts, ty+ts);
+            put_vertex(vo + x, vo + y,  vo + z,  tx, ty+ts);
+            put_vertex(vo + x, -vo + y, vo + z,  tx, ty);
+        }
 
-         //front?
-         put_vertex(-1.0f + x, -1.0f + y, -1.0f + z,    tx, ty);
-         put_vertex(-1.0f + x, -1.0f + y, 1.0f + z,     tx+ts, ty);
-         put_vertex(-1.0f + x, 1.0f + y,  1.0f + z,     tx+ts, ty+ts);
-         put_vertex(-1.0f + x, 1.0f + y,  -1.0f + z,    tx, ty+ts);
+         //left?
+         if (tile.lv) {
+            put_vertex(-vo + x, -vo + y, -vo + z,    tx, ty);
+            put_vertex(-vo + x, -vo + y, vo + z,     tx+ts, ty);
+            put_vertex(-vo + x, vo + y,  vo + z,     tx+ts, ty+ts);
+            put_vertex(-vo + x, vo + y,  -vo + z,    tx, ty+ts);
+        }
 
     }
 
     public void put_vertex(float x, float y, float z, float tx, float ty){
+
+        if (_vbo.VBO_buffer_size >= _vbo.VBO_max_buffer_size){
+            return; //safe switch
+        }
+
          _vbo.vertexPositionAttributes.putFloat(x);
          _vbo.vertexPositionAttributes.putFloat(y);
          _vbo.vertexPositionAttributes.putFloat(z);
@@ -138,6 +161,8 @@ public class Voxel {
 
 
          _vbo.vertexIndecies.putInt(_vbo.vertex_index++);
+
+         _vbo.VBO_buffer_size++;
     }
 
     public void render(){

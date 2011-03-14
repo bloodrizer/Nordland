@@ -20,6 +20,7 @@ public class DebugOverlay {
     static TrueTypeFont __font = null;
     
     public int fps = 0;
+    public int tiles =0;
     public Vector3f    position    = null;
 
     public void set_font(TrueTypeFont font){
@@ -28,11 +29,12 @@ public class DebugOverlay {
 
     public void render(){
         __font.drawString(10, 5, "FPS:" + Integer.toString( fps ), Color.white);
+        __font.drawString(10, 20, "Tiles:" + Integer.toString( tiles ), Color.white);
 
         if (position != null) {
-            __font.drawString(10, 30, "X:" + Float.toString( position.x ), Color.white);
-            __font.drawString(10, 45, "Y:" + Float.toString( position.y ), Color.white);
-            __font.drawString(10, 60, "Z:" + Float.toString( position.z ), Color.white);
+            __font.drawString(10, 45, "X:" + Float.toString( position.x ), Color.white);
+            __font.drawString(10, 60, "Y:" + Float.toString( position.y ), Color.white);
+            __font.drawString(10, 75, "Z:" + Float.toString( position.z ), Color.white);
         }
     }
 

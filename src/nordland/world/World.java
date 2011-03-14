@@ -25,6 +25,10 @@ public class World {
         game_map.build_all();
     }
 
+    public void build(){
+        
+    }
+
     /*public Map get_map(){
         return game_map;
     }*/

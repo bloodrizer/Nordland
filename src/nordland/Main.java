@@ -11,11 +11,16 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.Sys;
 
 import nordland.world.World;
+import nordland.world.map.Tile;
 import nordland.render.Render;
 import nordland.render.overlay.OverlaySystem;
+import nordland.render.Raycast;
 import nordland.render.Camera;
 
+import java.nio.FloatBuffer;
+
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 /**
  *
  * @author red
@@ -61,6 +66,9 @@ public class Main {
     
     }
 
+    public float wx = 0.0f;
+    public float wy = 0.0f;
+    public float wz = 0.0f;
 
    public void run(){
       getDelta();
@@ -79,6 +87,10 @@ public class Main {
 
         //hide the mouse
       Mouse.setGrabbed(true);
+
+      //WORLD.build();
+
+      OverlaySystem.getInstance().debug.tiles = WORLD.game_map.tile_count;
 
       while (!Display.isCloseRequested() &&
                 !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
@@ -103,12 +115,7 @@ public class Main {
             //controll camera pitch from y movement fromt the mouse
             camera.pitch(dy * mouseSensitivity);
 
-
-            //when passing in the distrance to move
-            //we times the movementSpeed with dt this is a time scale
-            //so if its a slow frame u move more then a fast frame
-            //so on a slow computer you move just as fast as on a fast computer
-            //Keyboard.poll();
+           
 
             INPUT.poll();
 
@@ -137,9 +144,28 @@ public class Main {
             //you would draw your scene here.
 
             RENDER.render_all();
+            //render will authomaticaly raytrace and set in-game cursor
+            Vector3f cursor = RENDER.cursor_position;
+            if (Mouse.isButtonDown(1))
+            {
+                WORLD.game_map.drop_tile(
+                        (int)cursor.x, (int)cursor.y-1, (int)cursor.z
+                );
+
+                Render.vbo.rebuild();
+            }
+            if (Mouse.isButtonDown(0))
+            {
+                WORLD.game_map.add_tile(
+                        (int)cursor.x, (int)cursor.y-1, (int)cursor.z
+                );
+
+                Render.vbo.rebuild();
+            }
+
           
           Display.update();
-          //Display.sync(120);
+          Display.sync(60);
 
         }
   }
