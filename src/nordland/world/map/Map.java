@@ -19,6 +19,13 @@ public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
     //private static Tile[][][] tiles = new Tile[200][200][200];
+
+    public static final int viewport_w = 3;
+    public static final int viewport_h = 3;
+
+    public static final int __CHUNK_SIZE = Chunk.CHUNK_SIZE;
+
+
     public int tile_count = 0;
     public static Tile[][][] tiles = new Tile[255][255][255];
     private Chunk[][] chunks = new Chunk[3][3];
@@ -37,6 +44,9 @@ public class Map {
             }*/
 
         build_chunk(0,0);
+        build_chunk(0,1);
+        build_chunk(1,0);
+        build_chunk(1,1);
 
         System.out.println("Builded " + Integer.toString(tile_count)+ " tiles");
 
@@ -45,13 +55,13 @@ public class Map {
 
     public void build_chunk(int i, int j){
 
-        for (int x= i*Chunk.CHUNK_SIZE; x< (i+1)*Chunk.CHUNK_SIZE; x++)
-                for (int y= -1*Chunk.CHUNK_SIZE; y<= 0*Chunk.CHUNK_SIZE; y++)
-                    for (int z=j*Chunk.CHUNK_SIZE; z<(j+1)*Chunk.CHUNK_SIZE; z++){
+        for (int x= i*__CHUNK_SIZE; x< (i+1)*__CHUNK_SIZE; x++)
+                for (int y= -1*__CHUNK_SIZE; y< 0*__CHUNK_SIZE; y++)
+                    for (int z=j*__CHUNK_SIZE; z<(j+1)*__CHUNK_SIZE; z++){
 
                     Vector3 origin = new Vector3(x,y,z);
 
-                    if (java.lang.Math.random() > 0.5 ) {
+                    if (java.lang.Math.random() > 0.01 ) {
                         Tile tmp_tile = new Tile(origin);
 
                         set_tile(origin, tmp_tile);
@@ -72,28 +82,13 @@ public class Map {
 
 
 
-    public int viewport_x = 0;
-    public int viewport_y = 0;
-    public int viewport_z = 0;
+
 
     public Tile get_tile( int x, int y, int z) {
-        //vec_key.set(x,y,z);
-        //Vector3 key = new Vector3(x,y,z);
+        util_v3.set(x,y,z);
+        util_v3 = V3world2local(util_v3);
 
-        //if (tiles.containsKey(key)){
-        //    return tiles.get(key);
-        //}
-        //return tiles.get(vec_key);
-
-        x = x + (3*Chunk.CHUNK_SIZE);
-        y = y + (3*Chunk.CHUNK_SIZE);
-        z = z + (3*Chunk.CHUNK_SIZE);
-
-
-        /*if (x>=0 && y>=0 && z>=0){
-            return tiles[x][y][z];
-        }*/
-        return tiles[x][y][z];
+        return tiles[util_v3.x][util_v3.y][util_v3.z];
         //return null;
 
     }
@@ -113,12 +108,11 @@ public class Map {
         System.out.println("clearing tile @ "+ Integer.toString(x) + "," + Integer.toString(y) + "," + Integer.toString(z));
 
         if ((tiles[x][y][z]) != null){
-            tiles[x][y][z] = null;
 
-            if (tiles[x-1][y][z] != null)
-                tiles[x-1][y][z].v_reset();
             if (tiles[x+1][y][z] != null)
                 tiles[x+1][y][z].v_reset();
+            if (tiles[x-1][y][z] != null)
+                tiles[x-1][y][z].v_reset();
             if (tiles[x][y+1][z] != null)
                 tiles[x][y+1][z].v_reset();
             if (tiles[x][y-1][z] != null)
@@ -127,6 +121,8 @@ public class Map {
                 tiles[x][y][z+1].v_reset();
             if (tiles[x][y][z-1] != null)
                 tiles[x][y][z-1].v_reset();
+
+            tiles[x][y][z] = null;
         }
       
     }
@@ -137,12 +133,16 @@ public class Map {
         set_tile(origin, tmp_tile);
     }
 
+    public int viewport_x = 3;
+    public int viewport_y = 3;
+    public int viewport_z = 3;
+
     public Vector3 V3world2local(Vector3 world) {
 
         world.set(
-                    world.x() + (3*Chunk.CHUNK_SIZE),
-                    world.y() + (3*Chunk.CHUNK_SIZE),
-                    world.z() + (3*Chunk.CHUNK_SIZE)
+                    world.x() + (viewport_x*Chunk.CHUNK_SIZE),
+                    world.y() + (viewport_y*Chunk.CHUNK_SIZE),
+                    world.z() + (viewport_z*Chunk.CHUNK_SIZE)
                 );
 
         return world;

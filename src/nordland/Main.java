@@ -90,14 +90,16 @@ public class Main {
 
       //WORLD.build();
 
-      OverlaySystem.getInstance().debug.tiles = WORLD.game_map.tile_count;
+      
 
       while (!Display.isCloseRequested() &&
                 !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
       {
 
             updateFPS();
-
+            OverlaySystem.getInstance().debug.tiles = WORLD.game_map.tile_count;
+            OverlaySystem.getInstance().debug.shards = RENDER.vbo.VBO_buffer_size/24;
+            OverlaySystem.getInstance().debug.max_shards = RENDER.vbo.VBO_max_buffer_size;
 
 
             time = getTime();

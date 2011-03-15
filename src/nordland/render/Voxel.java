@@ -110,6 +110,14 @@ public class Voxel {
              put_vertex(vo + x,  -vo + y,  -vo + z, tx,    ty);
         }
 
+          //left?
+         if (tile.lv) {
+            put_vertex(-vo + x, -vo + y, -vo + z,    tx, ty);
+            put_vertex(-vo + x, -vo + y, vo + z,     tx+ts, ty);
+            put_vertex(-vo + x, vo + y,  vo + z,     tx+ts, ty+ts);
+            put_vertex(-vo + x, vo + y,  -vo + z,    tx, ty+ts);
+        }
+
          //*top*
          if (tile.tv) {
              put_vertex(-vo + x, vo + y,  -vo + z, tx , ty+ts);
@@ -136,13 +144,7 @@ public class Voxel {
             put_vertex(vo + x, -vo + y, vo + z,  tx, ty);
         }
 
-         //left?
-         if (tile.lv) {
-            put_vertex(-vo + x, -vo + y, -vo + z,    tx, ty);
-            put_vertex(-vo + x, -vo + y, vo + z,     tx+ts, ty);
-            put_vertex(-vo + x, vo + y,  vo + z,     tx+ts, ty+ts);
-            put_vertex(-vo + x, vo + y,  -vo + z,    tx, ty+ts);
-        }
+        
 
     }
 

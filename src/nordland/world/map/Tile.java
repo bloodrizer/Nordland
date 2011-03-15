@@ -38,7 +38,7 @@ public class Tile {
     public Tile(Vector3 position){
         this.position = position;
 
-        if (position.x() % 30 == 0 || position.z() % 30 == 0){
+        if (position.x() % Chunk.CHUNK_SIZE == 0 || position.z() % Chunk.CHUNK_SIZE == 0){
             tile_type = 0;
         }
     }

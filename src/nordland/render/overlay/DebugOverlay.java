@@ -21,6 +21,10 @@ public class DebugOverlay {
     
     public int fps = 0;
     public int tiles =0;
+    
+    public int shards =0;
+    public int max_shards =0;
+    
     public Vector3f    position    = null;
 
     public void set_font(TrueTypeFont font){
@@ -28,14 +32,18 @@ public class DebugOverlay {
     }
 
     public void render(){
-        __font.drawString(10, 5, "FPS:" + Integer.toString( fps ), Color.white);
-        __font.drawString(10, 20, "Tiles:" + Integer.toString( tiles ), Color.white);
+        __font.drawString(10, 5, "FPS: " + Integer.toString( fps ), Color.white);
+        __font.drawString(10, 20, "Tiles: " + Integer.toString( tiles ) + 
+                " ( " + Integer.toString(shards) + " / " + Integer.toString(max_shards) + " ) ",
+                Color.white);
 
         if (position != null) {
-            __font.drawString(10, 45, "X:" + Float.toString( position.x ), Color.white);
-            __font.drawString(10, 60, "Y:" + Float.toString( position.y ), Color.white);
-            __font.drawString(10, 75, "Z:" + Float.toString( position.z ), Color.white);
+            __font.drawString(10, 45, "X: " + Float.toString( position.x ), Color.white);
+            __font.drawString(10, 60, "Y: " + Float.toString( position.y ), Color.white);
+            __font.drawString(10, 75, "Z: " + Float.toString( position.z ), Color.white);
         }
+
+        __font.drawString(320, 240, ".");
     }
 
 }

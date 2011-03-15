@@ -52,7 +52,7 @@ public class VBO {
         
     }
 
-    public static final  int VBO_max_buffer_size = 64*64*64 * 4 * 6 ;
+    public static final  int VBO_max_buffer_size = 32*32*32 * 4 * 6 ;
     public static int       VBO_buffer_size = 0;
 
     public static int createVBOID() {
@@ -107,57 +107,26 @@ public class VBO {
 
     static Voxel voxel_render = new Voxel(0,0,0);
 
-    public void build_chunk(int chunk_x, int chunk_y, int chunk_z) {
-        
-    }
 
-    public void rebuild(){
+
+    //rebuild VBO data based on current visible area
+    
+    public void rebuild( ){
 
         vertex_index = 0;
         VBO_buffer_size = 0;
 
         preload();
 
-        Tile __tile = null;
-        Map __map = World.getInstance().game_map;
-
-        //1.7m iterations
-        
         long vbo_build_start = System.nanoTime();
         
-        for (int x=-32; x< 32; x++)
-            for (int y=-32; y< 32; y++)
-                for (int z=-32; z<32; z++){
-                    __tile = __map.get_tile(x, y, z);
-                    if (__tile != null){
-
-                        //f k l r t b
-
-                        if ( (__map.get_tile(x-1,y,z)) != null){
-                            __tile.lv = false;
-                        }
-                        if ( (__map.get_tile(x,y-1,z)) != null){
-                            __tile.bv = false;
-                        }
-                        if ( (__map.get_tile(x,y,z-1)) != null){
-                            __tile.kv = false;
-                        }
-                        if ( (__map.get_tile(x+1,y,z)) != null){
-                            __tile.rv = false;
-                        }
-                        if ( (__map.get_tile(x,y+1,z)) != null){
-                            __tile.tv = false;
-                        }
-                        if ( (__map.get_tile(z,y,z+1)) != null){
-                            __tile.fv = false;
-                        }
-
-                        voxel_render.set_origin(x, y, z);
-                        voxel_render.tile_id = __tile.tile_type;
-                        voxel_render.build_vbo(this, __tile);
-                    }
-        }
         
+
+        build_chunk(0,-1,0);
+        build_chunk(1,-1,0);
+        
+        build_chunk(0,-1,1);
+        build_chunk(1,-1,1);
 
         unload();
 
@@ -173,6 +142,51 @@ public class VBO {
         ); //in ms
     }
 
+
+    public void build_chunk(int chunk_x, int chunk_y, int chunk_z){
+        Tile __tile = null;
+        Map __map = World.getInstance().game_map;
+        int CS = Map.__CHUNK_SIZE;
+
+        for (int x=chunk_x*CS; x < (chunk_x+1)*CS; x++)
+        for (int y=chunk_y*CS; y < (chunk_y+1)*CS; y++)
+        for (int z=chunk_z*CS; z < (chunk_z+1)*CS; z++)
+        {
+            
+                    __tile = __map.get_tile(x, y, z);
+                    if (__tile != null)
+                    {
+
+                        //f k l r t b
+
+                        if ( (__map.get_tile(z,y,z+1)) != null){
+                            __tile.fv = false;
+                        }
+                        if ( (__map.get_tile(x,y,z-1)) != null){
+                            __tile.kv = false;
+                        }
+
+                        if ( (__map.get_tile(x-1,y,z)) != null){
+                            __tile.lv = false;
+                        }
+                        if ( (__map.get_tile(x+1,y,z)) != null){
+                            __tile.rv = false;
+                        }
+                        
+                        if ( (__map.get_tile(x,y-1,z)) != null){
+                            __tile.bv = false;
+                        }
+                        if ( (__map.get_tile(x,y+1,z)) != null){
+                            __tile.tv = false;
+                        }
+                        
+
+                        voxel_render.set_origin(x, y, z);
+                        voxel_render.tile_id = __tile.tile_type;
+                        voxel_render.build_vbo(this, __tile);
+                    }
+        }
+    }
 
     public void unload(){
 
