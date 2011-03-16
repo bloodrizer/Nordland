@@ -4,8 +4,11 @@
  */
 
 package nordland.util.math;
+import org.lwjgl.util.vector.Vector3f;
 
 public final class Vector3 {
+
+        public static Vector3 util_vec3 = new Vector3(0,0,0);
 
 	/**
 	 * Returns a vector with the given values.
@@ -21,11 +24,27 @@ public final class Vector3 {
 		return new Vector3(x, y, z);
 	}
 
-        public void set(int x, int y, int z) {
+        public Vector3 set(int x, int y, int z) {
             this.x = x;
             this.y = y;
             this.z = z;
+            
+            return this;
+        }
 
+        public Vector3 set(Vector3f vec){
+            this.x = (int)vec.x;
+            this.y = (int)vec.y;
+            this.z = (int)vec.z;
+            return this;
+        }
+
+        public Vector3 set(Vector3 vec){
+            this.x = vec.x;
+            this.y = vec.y;
+            this.z = vec.z;
+
+            return this;
         }
 
 	/** Lazily initialized, cached hash code. */

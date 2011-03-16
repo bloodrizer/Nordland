@@ -152,7 +152,7 @@ public class VBO {
         Tile __tile = null;
         Tile __nb = null;
 
-        Map __map = World.getInstance().game_map;
+        Map __map = World.game_map;
         int CS = Map.__CHUNK_SIZE;
 
         for (int x=chunk_x*CS; x < (chunk_x+1)*CS; x++)

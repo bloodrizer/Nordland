@@ -10,6 +10,9 @@ import nordland.world.map.Tile;
 
 import nordland.render.overlay.OverlaySystem;
 
+import nordland.ent.Entity;
+import nordland.ent.EntityManager;
+
 /**
  *
  * @author red
@@ -25,7 +28,7 @@ public class Map {
 
 
     public int tile_count = 0;
-    public static Tile[][][] tiles = new Tile[255][255][255];
+    public Tile[][][] tiles = new Tile[255][255][255];
     private Chunk[][] chunks = new Chunk[3][3];
 
 
@@ -57,7 +60,8 @@ public class Map {
 
                     Vector3 origin = new Vector3(x,y,z);
 
-                    if (java.lang.Math.random() > 0.01 ) {
+                    //add some debug clusterisation there
+                    if (java.lang.Math.random() > 0 ) {
                         Tile tmp_tile = new Tile(origin);
 
                         set_tile(origin, tmp_tile);
@@ -129,11 +133,11 @@ public class Map {
         set_tile(origin, tmp_tile);
     }
 
-    public int viewport_x = 3;
-    public int viewport_y = 3;
-    public int viewport_z = 3;
+    public static int viewport_x = 3;
+    public static int viewport_y = 3;
+    public static int viewport_z = 3;
 
-    public Vector3 V3world2local(Vector3 world) {
+    public static Vector3 V3world2local(Vector3 world) {
 
         world.set(
                     world.x() + (viewport_x*Chunk.CHUNK_SIZE),

@@ -7,6 +7,7 @@ package nordland.render;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
+import nordland.util.math.Vector3;
 
 /**
  *
@@ -21,6 +22,11 @@ public class Camera {
     public Camera(float x, float y, float z)
     {
         position = new Vector3f(x, y, z);
+    }
+
+    public Vector3 get_V3position(){
+        
+        return Vector3.util_vec3.set(position);
     }
 
 

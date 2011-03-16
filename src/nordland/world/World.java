@@ -6,31 +6,28 @@
 package nordland.world;
 
 import nordland.world.map.Map;
+import nordland.render.Render;
 
 /**
  *
  * @author red
  */
 public class World {
-    private static final World INSTANCE = new World();
+
+    static World _instance;
 
     public static World getInstance() {
-        return INSTANCE;
+        if (_instance == null) {
+            _instance = new World();
+        } return _instance;
     }
 
-    public static Map game_map;
+    public static Map game_map = new Map();
 
-    private World() {
-        game_map = new Map();
+    public void rebuild()
+    {
         game_map.build_all();
+        Render.vbo.rebuild();
     }
 
-    public void build(){
-        
-    }
-
-    /*public Map get_map(){
-        return game_map;
-    }*/
-    
 }

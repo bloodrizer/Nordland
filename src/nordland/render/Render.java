@@ -9,34 +9,18 @@ package nordland.render;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-
 import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.ARBVertexBufferObject;
 
 import org.lwjgl.LWJGLException;
-
 
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 
-
-import nordland.render.Voxel;
-import nordland.render.VBO;
-//import nordland.render.Picking;
-
-import nordland.util.math.Vector3;
-import nordland.world.map.Tile;
-import nordland.world.map.Chunk;
-import nordland.world.World;
-
 import nordland.render.overlay.OverlaySystem;
-import java.nio.ByteBuffer;
+import nordland.ent.Entity;
+
 import java.nio.FloatBuffer;
-import java.nio.ByteOrder;
 
-import java.util.List;
-
-import org.lwjgl.input.Mouse;
 
 
 /**
@@ -119,7 +103,7 @@ public class Render {
     private float lightPosition[] = { 1.0f, 1.0f, 0.0f, 0.1f };
     float lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    public void render_all() {
+    public void render_world() {
         
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
     GL11.glTranslatef(0.0f,-2.0f,0.0f);                              // Move Into The Screen 5 Units
@@ -158,7 +142,15 @@ public class Render {
         voxel_render.set_origin((int)wx , (int)wy-1, (int)wz);
         voxel_render.render();
 
-        overlay.render();
+    }
 
+    public void render_entity(Entity ent){
+        voxel_render.tile_id = 4;
+        voxel_render.set_origin((int)-ent.origin.x , 0, (int)-ent.origin.z);
+        voxel_render.render();
+    }
+
+    public void render_overlay(){
+        overlay.render();
     }
 }

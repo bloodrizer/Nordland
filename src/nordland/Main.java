@@ -17,7 +17,11 @@ import nordland.render.overlay.OverlaySystem;
 import nordland.render.Raycast;
 import nordland.render.Camera;
 
+import nordland.ent.Entity;
+import nordland.ent.EntityManager;
+
 import java.nio.FloatBuffer;
+import nordland.util.math.Vector3;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -32,8 +36,8 @@ public class Main {
   long lastFrame;
 
     public static final Render RENDER = Render.getInstance();
-    public static final World WORLD = World.getInstance();
     public static final Input INPUT = Input.getInstance();
+    public static final World WORLD = World.getInstance();
 
     /**
      * @param args the command line arguments
@@ -70,6 +74,9 @@ public class Main {
     public float wy = 0.0f;
     public float wz = 0.0f;
 
+
+   
+   
    public void run(){
       getDelta();
       lastFPS = getTime();
@@ -88,8 +95,13 @@ public class Main {
         //hide the mouse
       Mouse.setGrabbed(true);
 
-      //WORLD.build();
+      
+      WORLD.rebuild();   //строка Б
 
+
+      //player generation and shit
+      Entity player = new Entity();
+      EntityManager.add(player);
       
 
       while (!Display.isCloseRequested() &&
@@ -145,7 +157,14 @@ public class Main {
             camera.setMatrix();
             //you would draw your scene here.
 
-            RENDER.render_all();
+
+            player.move_to(camera.get_V3position());
+
+            RENDER.render_world();
+            RENDER.render_entity(player);
+            RENDER.render_overlay();
+
+
             //render will authomaticaly raytrace and set in-game cursor
             Vector3f cursor = RENDER.cursor_position;
             if (Mouse.isButtonDown(1))
