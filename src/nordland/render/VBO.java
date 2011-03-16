@@ -122,11 +122,16 @@ public class VBO {
         
         
 
-        build_chunk(0,-1,0);
+        /*build_chunk(0,-1,0);
         build_chunk(1,-1,0);
         
-        build_chunk(0,-1,1);
-        build_chunk(1,-1,1);
+        build_chunk(0,-1, 1);
+        build_chunk(1,-1, 1);*/
+        for (int x = -1; x<= 1; x++)
+        for (int y = -2; y<= 0; y++)
+        for (int z = -1; z<= 1; z++){
+            build_chunk(x, y, z);
+        }
 
         unload();
 
@@ -135,16 +140,18 @@ public class VBO {
 
         System.out.println(
                 Integer.toString(
-                    (int)(
-                        ( System.nanoTime() - vbo_build_start ) / (1000*1000)
-                    )
-                )
+                        (int)(
+                            ( System.nanoTime() - vbo_build_start ) / (1000*1000)
+                        )
+                ) + " ms elasped"
         ); //in ms
     }
 
 
     public void build_chunk(int chunk_x, int chunk_y, int chunk_z){
         Tile __tile = null;
+        Tile __nb = null;
+
         Map __map = World.getInstance().game_map;
         int CS = Map.__CHUNK_SIZE;
 
@@ -159,7 +166,7 @@ public class VBO {
 
                         //f k l r t b
 
-                        if ( (__map.get_tile(z,y,z+1)) != null){
+                        if ( (__map.get_tile(x,y,z+1)) != null){
                             __tile.fv = false;
                         }
                         if ( (__map.get_tile(x,y,z-1)) != null){

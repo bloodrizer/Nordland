@@ -139,23 +139,23 @@ public class Render {
         
 
         FloatBuffer World_Ray = Raycast.getMousePosition(320,200);
-            int wx = (int)World_Ray.get(0);
-            int wy = (int)World_Ray.get(1);
-            int wz = (int)World_Ray.get(2);
+            float wx = World_Ray.get(0)+0.5f;
+            float wy = World_Ray.get(1)+0.5f;
+            float wz = World_Ray.get(2)+0.5f;
 
         Display.setTitle("FPS: 0"
-            + " WX: " + Integer.toString(wx)
-            + " WY: " + Integer.toString(wy)
-            + " WZ: " + Integer.toString(wz)
+            + " WX: " + Float.toString(wx)
+            + " WY: " + Float.toString(wy)
+            + " WZ: " + Float.toString(wz)
         );
 
-        cursor_position.set(wx,wy,wz);
+        cursor_position.set((int)wx,(int)wy,(int)wz);
 
         //List<Integer> hits = Picking.end();
 
         //render aim cursor
         voxel_render.tile_id = 6;
-        voxel_render.set_origin(wx , wy-1, wz);
+        voxel_render.set_origin((int)wx , (int)wy-1, (int)wz);
         voxel_render.render();
 
         overlay.render();

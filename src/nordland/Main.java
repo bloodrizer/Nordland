@@ -99,7 +99,7 @@ public class Main {
             updateFPS();
             OverlaySystem.getInstance().debug.tiles = WORLD.game_map.tile_count;
             OverlaySystem.getInstance().debug.shards = RENDER.vbo.VBO_buffer_size/24;
-            OverlaySystem.getInstance().debug.max_shards = RENDER.vbo.VBO_max_buffer_size;
+            OverlaySystem.getInstance().debug.max_shards = RENDER.vbo.VBO_max_buffer_size/24;
 
 
             time = getTime();

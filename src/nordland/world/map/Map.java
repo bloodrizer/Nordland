@@ -18,10 +18,8 @@ import nordland.render.overlay.OverlaySystem;
 public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
-    //private static Tile[][][] tiles = new Tile[200][200][200];
 
-    public static final int viewport_w = 3;
-    public static final int viewport_h = 3;
+    public static final int cluster_size = 3;
 
     public static final int __CHUNK_SIZE = Chunk.CHUNK_SIZE;
 
@@ -35,29 +33,27 @@ public class Map {
 
     }
 
-    public void build_all(){
+    public void build_cluster(int x, int y, int z){
 
-        /*for (int i = -1; i<0; i++)
-            for (int j = -1; j<0; j++)
-            {
-               build_chunk(i,j);
-            }*/
-
-        build_chunk(0,0);
-        build_chunk(0,1);
-        build_chunk(1,0);
-        build_chunk(1,1);
-
-        System.out.println("Builded " + Integer.toString(tile_count)+ " tiles");
-
-        //OverlaySystem.getInstance().debug.tiles = tile_count;
+        for (int i = x; i<x+cluster_size; i++)
+        for (int j = y; j<y+cluster_size; j++)
+        for (int k = z; k<z+cluster_size; k++)
+        {
+               build_chunk(i,j,k);
+        }
     }
 
-    public void build_chunk(int i, int j){
+    public void build_all(){
+         build_cluster(-1,-1,-1);
+         System.out.println("Built " + Integer.toString(tile_count)+ " tiles");
+    }
+
+    public void build_chunk(int i, int j, int k){
 
         for (int x= i*__CHUNK_SIZE; x< (i+1)*__CHUNK_SIZE; x++)
-                for (int y= -1*__CHUNK_SIZE; y< 0*__CHUNK_SIZE; y++)
-                    for (int z=j*__CHUNK_SIZE; z<(j+1)*__CHUNK_SIZE; z++){
+        for (int y= (j-2)*__CHUNK_SIZE; y< (j-1)*__CHUNK_SIZE; y++)
+        for (int z=k*__CHUNK_SIZE; z<(k+1)*__CHUNK_SIZE; z++)
+        {
 
                     Vector3 origin = new Vector3(x,y,z);
 
@@ -68,7 +64,7 @@ public class Map {
 
                         tile_count++;
                    }
-            }
+       }
 
     }
 
