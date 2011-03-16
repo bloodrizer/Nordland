@@ -146,7 +146,7 @@ public class Render {
 
     public void render_entity(Entity ent){
         voxel_render.tile_id = 4;
-        voxel_render.set_origin((int)-ent.origin.x , 0, (int)-ent.origin.z);
+        voxel_render.set_origin((int)ent.origin.x , 0, (int)ent.origin.z);
         voxel_render.render();
     }
 

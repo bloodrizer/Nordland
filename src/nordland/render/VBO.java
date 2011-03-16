@@ -121,17 +121,26 @@ public class VBO {
         long vbo_build_start = System.nanoTime();
         
         
+        for (int x = Map.cluster_x; x< Map.cluster_x+Map.cluster_size; x++)
+        for (int y = Map.cluster_y; y< Map.cluster_y+Map.cluster_size; y++)
+        for (int z = Map.cluster_z; z< Map.cluster_z+Map.cluster_size; z++)
+        {
+            build_chunk(x,y,z);
+        }
+        //build_chunk(Map.cluster_x,Map.cluster_y,Map.cluster_z);
+       
 
-        /*build_chunk(0,-1,0);
-        build_chunk(1,-1,0);
+        //build_chunk(Map.cluster_x+1,1,Map.cluster_z+1);
+
+        /*build_chunk(1,-1,0);
         
         build_chunk(0,-1, 1);
         build_chunk(1,-1, 1);*/
-        for (int x = -1; x<= 1; x++)
+        /*for (int x = Map.viewport_x-4; x<= Map.viewport_x-2; x++)
         for (int y = -2; y<= 0; y++)
-        for (int z = -1; z<= 1; z++){
+        for (int z = Map.viewport_z-4; z<= Map.viewport_z-2; z++){
             build_chunk(x, y, z);
-        }
+        }*/
 
         unload();
 

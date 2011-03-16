@@ -46,22 +46,41 @@ public class Map {
         }
     }
 
+
+    public static int cluster_x = -1;
+    public static int cluster_y = -1;
+    public static int cluster_z = -1;
+
+    public static Vector3 V3world2local(Vector3 world) {
+
+        world.set(
+                    world.x() - (cluster_x*Chunk.CHUNK_SIZE),
+                    world.y() - (cluster_y*Chunk.CHUNK_SIZE),
+                    world.z() - (cluster_z*Chunk.CHUNK_SIZE)
+                );
+
+        return world;
+    }
+
     public void build_all(){
-         build_cluster(-1,-1,-1);
+         build_cluster(cluster_x,cluster_y,cluster_z);
          System.out.println("Built " + Integer.toString(tile_count)+ " tiles");
     }
 
     public void build_chunk(int i, int j, int k){
 
         for (int x= i*__CHUNK_SIZE; x< (i+1)*__CHUNK_SIZE; x++)
-        for (int y= (j-2)*__CHUNK_SIZE; y< (j-1)*__CHUNK_SIZE; y++)
-        for (int z=k*__CHUNK_SIZE; z<(k+1)*__CHUNK_SIZE; z++)
+        for (int y= j*__CHUNK_SIZE; y< (j+1)*__CHUNK_SIZE; y++)
+        for (int z= k*__CHUNK_SIZE; z< (k+1)*__CHUNK_SIZE; z++)
         {
 
                     Vector3 origin = new Vector3(x,y,z);
+                    Vector3 w_origin = new Vector3(x,y,z);
+
+                    //Vector3.util_vec3.set(V3world2local(origin));
 
                     //add some debug clusterisation there
-                    if (java.lang.Math.random() > 0 ) {
+                    if (java.lang.Math.random() > 0.01 && y<0 ) {
                         Tile tmp_tile = new Tile(origin);
 
                         set_tile(origin, tmp_tile);
@@ -74,8 +93,8 @@ public class Map {
 
     public void set_tile(Vector3 origin, Tile tile){
 
-        origin = V3world2local(origin);
-        tiles[origin.x()][origin.y()][origin.z()] = tile;
+        Vector3 _origin = V3world2local(origin);
+        tiles[_origin.x()][_origin.y()][_origin.z()] = tile;
     }
 
     public static Vector3 util_v3 = new Vector3(0,0,0);
@@ -87,6 +106,12 @@ public class Map {
     public Tile get_tile( int x, int y, int z) {
         util_v3.set(x,y,z);
         util_v3 = V3world2local(util_v3);
+
+        if (util_v3.x<0 || util_v3.y<0 || util_v3.z<0)
+            return null;
+
+        if (util_v3.x>255 || util_v3.y>255 || util_v3.z>255)
+            return null;
 
         return tiles[util_v3.x][util_v3.y][util_v3.z];
         //return null;
@@ -133,18 +158,4 @@ public class Map {
         set_tile(origin, tmp_tile);
     }
 
-    public static int viewport_x = 3;
-    public static int viewport_y = 3;
-    public static int viewport_z = 3;
-
-    public static Vector3 V3world2local(Vector3 world) {
-
-        world.set(
-                    world.x() + (viewport_x*Chunk.CHUNK_SIZE),
-                    world.y() + (viewport_y*Chunk.CHUNK_SIZE),
-                    world.z() + (viewport_z*Chunk.CHUNK_SIZE)
-                );
-
-        return world;
-    }
 }

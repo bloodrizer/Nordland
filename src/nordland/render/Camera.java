@@ -26,7 +26,7 @@ public class Camera {
 
     public Vector3 get_V3position(){
         
-        return Vector3.util_vec3.set(position);
+        return Vector3.util_vec3.set(-(int)position.x, -(int)position.y, -(int)position.z);
     }
 
 

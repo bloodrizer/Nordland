@@ -81,7 +81,7 @@ public class Main {
       getDelta();
       lastFPS = getTime();
 
-      Camera camera = new Camera(0, 0, 0);
+      Camera camera = new Camera(-16, 0, -16);
 
       float dx        = 0.0f;
       float dy        = 0.0f;

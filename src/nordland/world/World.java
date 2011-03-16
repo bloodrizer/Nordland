@@ -24,7 +24,7 @@ public class World {
 
     public static Map game_map = new Map();
 
-    public void rebuild()
+    public static void rebuild()
     {
         game_map.build_all();
         Render.vbo.rebuild();
