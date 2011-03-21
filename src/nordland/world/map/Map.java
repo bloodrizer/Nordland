@@ -1,17 +1,10 @@
 
 package nordland.world.map;
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 import nordland.util.math.Vector3;
-import nordland.world.map.Chunk;
-import nordland.world.map.Tile;
 
-import nordland.render.overlay.OverlaySystem;
 
-import nordland.ent.Entity;
-import nordland.ent.EntityManager;
+import nordland.world.map.gen.Perlin;
 
 /**
  *
@@ -22,13 +15,13 @@ public class Map {
     //private java.util.Map<Vector3,Tile> tiles = new HashMap<Vector3,Tile>(1000);
 
 
-    public static final int cluster_size = 3;
+    public static final int cluster_size = 5;
 
     public static final int __CHUNK_SIZE = Chunk.CHUNK_SIZE;
 
 
-    public int tile_count = 0;
-    public Tile[][][] tiles = new Tile[255][255][255];
+    public static int tile_count = 0;
+    public static Tile[][][] tiles = new Tile[255][255][255];
     private Chunk[][] chunks = new Chunk[3][3];
 
 
@@ -36,6 +29,7 @@ public class Map {
 
     }
 
+    
     public void build_cluster(int x, int y, int z){
 
         for (int i = x; i<x+cluster_size; i++)
@@ -63,26 +57,48 @@ public class Map {
     }
 
     public void build_all(){
+         long build_start = System.nanoTime();
+
          build_cluster(cluster_x,cluster_y,cluster_z);
+         
          System.out.println("Built " + Integer.toString(tile_count)+ " tiles");
+         System.out.println(
+                Integer.toString(
+                        (int)(
+                            ( System.nanoTime() - build_start ) / (1000*1000)
+                        )
+                ) + " ms elasped"
+        ); //in ms
     }
 
-    public void build_chunk(int i, int j, int k){
+    static Vector3 origin = new Vector3(0,0,0);
+    static Vector3 w_origin = new Vector3(0,0,0);
+
+    public static void build_chunk(int i, int j, int k){
+
+        float height = 0.0f;
 
         for (int x= i*__CHUNK_SIZE; x< (i+1)*__CHUNK_SIZE; x++)
         for (int y= j*__CHUNK_SIZE; y< (j+1)*__CHUNK_SIZE; y++)
         for (int z= k*__CHUNK_SIZE; z< (k+1)*__CHUNK_SIZE; z++)
         {
 
-                    Vector3 origin = new Vector3(x,y,z);
-                    Vector3 w_origin = new Vector3(x,y,z);
-
+                    origin.set(x,y,z);
+                    //w_origin.set(x,y,z);
                     //Vector3.util_vec3.set(V3world2local(origin));
 
                     //add some debug clusterisation there
-                    if (java.lang.Math.random() > 0.01 && y<0 ) {
-                        Tile tmp_tile = new Tile(origin);
+                    // java.lang.Math.random() > 0.01 &&
 
+
+
+                    height = Perlin.getHeight(x, z, 0);
+
+                    if ( y< height ) {
+
+                        Tile tmp_tile;
+                        tmp_tile = new Tile(origin); 
+                       
                         set_tile(origin, tmp_tile);
 
                         tile_count++;
@@ -91,7 +107,7 @@ public class Map {
 
     }
 
-    public void set_tile(Vector3 origin, Tile tile){
+    public static void set_tile(Vector3 origin, Tile tile){
 
         Vector3 _origin = V3world2local(origin);
         tiles[_origin.x()][_origin.y()][_origin.z()] = tile;
@@ -103,7 +119,7 @@ public class Map {
 
 
 
-    public Tile get_tile( int x, int y, int z) {
+    public static Tile get_tile( int x, int y, int z) {
         util_v3.set(x,y,z);
         util_v3 = V3world2local(util_v3);
 
@@ -156,6 +172,17 @@ public class Map {
         Vector3 origin = new Vector3(x,y,z);
         Tile tmp_tile = new Tile(origin);
         set_tile(origin, tmp_tile);
+    }
+
+
+
+
+    public static void relocate(int cx, int cy, int cz) {
+        
+            Map.cluster_x = cx;
+            Map.cluster_y = cy;
+            Map.cluster_z = cz;
+
     }
 
 }

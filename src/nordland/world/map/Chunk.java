@@ -13,4 +13,19 @@ public class Chunk {
 
     public static final int CHUNK_SIZE = 32;
 
+
+
+
+    public void load(){
+
+    }
+
+    public void unload(){
+        
+    }
+
+    public void copy(Chunk src){
+        
+    }
+
 }

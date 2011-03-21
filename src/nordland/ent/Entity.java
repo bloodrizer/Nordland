@@ -28,15 +28,17 @@ public class Entity {
 
         
     }
-
+    static int CL_OFFSET = (Map.cluster_size-1)/2;
     public void e_on_move(Vector3 origin_old, Vector3 origin_new){
         //TODO: move to player
         /*if (origin_new.x % Chunk.CHUNK_SIZE == 0){
 
         }*/
-        int cx = (int)(origin_new.x / Chunk.CHUNK_SIZE)-1;
-        int cy = (int)(origin_new.y / Chunk.CHUNK_SIZE)-1;
-        int cz = (int)(origin_new.z / Chunk.CHUNK_SIZE)-1;
+
+
+        int cx = (int)Math.floor((float)origin_new.x / Chunk.CHUNK_SIZE)-CL_OFFSET;
+        int cy = (int)Math.floor((float)origin_new.y / Chunk.CHUNK_SIZE)-CL_OFFSET;
+        int cz = (int)Math.floor((float)origin_new.z / Chunk.CHUNK_SIZE)-CL_OFFSET;
 
         OverlaySystem.getInstance().debug.cluster_position.set(cx,cy,cz);
 
@@ -44,9 +46,10 @@ public class Entity {
              cy != Map.cluster_y ||
              cz != Map.cluster_z
         ){
-            Map.cluster_x = cx;
-            Map.cluster_y = cy;
-            Map.cluster_z = cz;
+            Map.relocate(cx,cy,cz);
+            //Map.cluster_x = cx;
+            //Map.cluster_y = cy;
+            //Map.cluster_z = cz;
             World.rebuild();
         }
 
