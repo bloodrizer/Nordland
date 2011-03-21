@@ -43,4 +43,7 @@ public class Tile {
         }
     }
 
+    public static boolean empty(Tile tile){
+        return (tile == null || tile.tile_type == 0);
+    }
 }
