@@ -1,8 +1,10 @@
 
 package nordland.world.map;
 
+
 import java.util.Collections;
 import java.util.HashMap;
+
 import nordland.util.math.Vector3;
 
 
@@ -16,6 +18,7 @@ import nordland.threads.WorldBuilder;
 
 public class Map {
 
+
     private static final boolean USE_HASHMAP = false;
 
 
@@ -25,6 +28,7 @@ public class Map {
 
     public static final int cluster_size = 5;
     public static final int __CHUNK_SIZE = Chunk.CHUNK_SIZE;
+    public static final int buff_size = cluster_size*__CHUNK_SIZE;
 
     public static final int buff_size = cluster_size*__CHUNK_SIZE;
     public static Tile[][][] tiles = new Tile[buff_size][buff_size][buff_size];
@@ -34,8 +38,9 @@ public class Map {
 
 
     public static int tile_count = 0;
-    
+
     public static Chunk[][][] chunks = new Chunk[cluster_size][cluster_size][cluster_size];
+
 
 
     public Thread world_builder;
@@ -141,7 +146,6 @@ public class Map {
     }
 
 
-
     public static synchronized void set_tile(Vector3 origin, Tile tile){
 
         //Vector3 _origin = V3world2local(origin);
@@ -153,6 +157,7 @@ public class Map {
             //if ( get_tile(origin.x, origin.y, origin.z) != null){
                 if (origin.x<0 || origin.y<0 || origin.z<0)
                     return;
+
 
                 if (origin.x>=buff_size || origin.y>=buff_size || origin.z>=buff_size)
                     return;
@@ -167,8 +172,10 @@ public class Map {
         util_v3.set(x,y,z);
         util_v3 = V3world2local(util_v3);
 
+
         if (util_v3.x<0 || util_v3.y<0 || util_v3.z<0)
            return null;
+
 
         if (util_v3.x>=buff_size || util_v3.y>=buff_size || util_v3.z>=buff_size)
            return null;
@@ -179,6 +186,7 @@ public class Map {
             return tiles[util_v3.x][util_v3.y][util_v3.z];
         }
         //return null;
+
 
     }
 
@@ -195,6 +203,13 @@ public class Map {
         z = util_v3.z;
 
         System.out.println("clearing tile @ "+ Integer.toString(x) + "," + Integer.toString(y) + "," + Integer.toString(z));
+        
+        /*Tile __tyle;
+
+        if ((__tyle = tiles.get(util_v3)) != null){
+            //__tyle.tile_type = 0;
+            __tyle = null;
+        }*/
 
         if ((tiles[x][y][z]) != null){
 
@@ -221,8 +236,6 @@ public class Map {
         Tile tmp_tile = new Tile(origin);
         set_tile(origin, tmp_tile);
     }
-
-
 
 
     public static void relocate(int cx, int cy, int cz) {
