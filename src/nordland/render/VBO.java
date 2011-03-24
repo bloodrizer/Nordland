@@ -25,6 +25,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteOrder;
 /**
  *
  * @author Red
@@ -40,9 +41,8 @@ public class VBO {
     int vertexIndexSize = 4;
     int totalVertecies = 4;
 
-    ByteBuffer vertexPositionAttributes = null;
-    ByteBuffer vertexTextureAttributes = null;
-    ByteBuffer vertexIndecies = null;
+    public volatile ByteBuffer vertexPositionAttributes = null;
+    public volatile ByteBuffer vertexIndecies = null;
 
     public int vertex_index = 0;
 
@@ -50,7 +50,12 @@ public class VBO {
 
 
     public void init(){
-        
+        try {
+            texture = TextureLoader.getTexture("PNG", new FileInputStream("Data/terrain.png"));
+        }
+        catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public static final  int VBO_max_buffer_size = 32*32*32 * 4 * 6 ;
@@ -60,7 +65,7 @@ public class VBO {
         return ARBVertexBufferObject.glGenBuffersARB();
     }
 
-    //prepair VBO buffer and get a pointer to it
+    //prepair VBO buffer, map it and get a pointer to it
 
     public static ByteBuffer precache_bufferData(int vbo_id, int TYPE, int size) {
         ARBVertexBufferObject.glBindBufferARB(TYPE, vbo_id);
@@ -69,13 +74,67 @@ public class VBO {
         return  ARBVertexBufferObject.glMapBufferARB( TYPE, ARBVertexBufferObject.GL_WRITE_ONLY_ARB, size, null);
     }
 
-    //--------------------------------------------------------------------------
-    public void preload(){
+    //bu
+    public static void process_bufferData(int vbo_id, int TYPE, ByteBuffer buffer){
+        ARBVertexBufferObject.glBindBufferARB(TYPE, vbo_id);
+        ARBVertexBufferObject.glBufferDataARB(TYPE, buffer, ARBVertexBufferObject.GL_STATIC_DRAW_ARB);
+    }
 
-        if (GLContext.getCapabilities() == null){
-            System.exit(0);
+    //--------------------------------------------------------------------------
+    //  Обновить vbo из нового буфера
+    //--------------------------------------------------------------------------
+
+
+    ByteBuffer buff_data    = ByteBuffer.allocate(vertexPositionAttributeSize *VBO_max_buffer_size);
+    ByteBuffer buff_index   = ByteBuffer.allocate(vertexIndexSize * VBO_max_buffer_size);
+
+    public static boolean vbo_invalidate = false;
+
+    public void update_vbo_buffer(){
+
+        if (vbo_invalidate == false){
+            return;
+        }else{
+            System.out.println("updating invalidated VBO");
+        }
+        
+        //if new buffer generated
+
+        if (vboid_data == 0){
+            vboid_data  =   createVBOID();
+        }
+        if (vboid_index == 0){
+            vboid_index  =   createVBOID();
         }
 
+        /*if (vboid_data != 0){
+            ARBVertexBufferObject.glDeleteBuffersARB(vboid_data);
+        }
+        if (vboid_index != 0){
+            ARBVertexBufferObject.glDeleteBuffersARB(vboid_index);
+        }
+
+        vboid_data  =   createVBOID();
+        vboid_index =   createVBOID();*/
+
+        //ByteBuffer vertexPositionAttributes = null;
+        //ByteBuffer vertexIndecies = null;
+
+        process_bufferData(vboid_data,  ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB,         vertexPositionAttributes);
+        process_bufferData(vboid_index, ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vertexIndecies);
+
+        vbo_invalidate = false;
+    }
+
+
+
+
+
+
+
+    //--------------------------------------------------------------------------
+    /*public void preload(){
+       
         if (vboid_data != 0){
             ARBVertexBufferObject.glDeleteBuffersARB(vboid_data);
         }
@@ -93,58 +152,73 @@ public class VBO {
             System.out.println(GL11.glGetError());
             return;
         }
-        
+
 
         //----------------------------------------------------------------------
         vertexIndexSize = 4;
         vertexIndecies = precache_bufferData(vboid_index,
                 ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB,vertexIndexSize * VBO_max_buffer_size
                 );
-        
-        
+
+
         try {
             texture = TextureLoader.getTexture("PNG", new FileInputStream("Data/terrain.png"));
         }
         catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-    }
+    }*/
+
+
 
     static Voxel voxel_render = new Voxel(0,0,0);
 
 
 
     //rebuild VBO data based on current visible area
-    
+
+    public void rebuild_buffer( ){
+
+        vertexPositionAttributes   = ByteBuffer.
+                allocateDirect(vertexPositionAttributeSize * VBO_max_buffer_size).
+                order(ByteOrder.nativeOrder());
+        vertexIndecies             = ByteBuffer.
+                allocateDirect(vertexIndexSize * VBO_max_buffer_size).
+                order(ByteOrder.nativeOrder());
+
+        //vertexPositionAttributes.clear();
+        //vertexIndecies.clear();
+
+        /*build_chunks_all();
+        vbo_invalidate = true;
+
+        vertexPositionAttributes.flip();
+        vertexIndecies.flip();*/
+
+
+        //update_vbo_buffer();
+
+        //System.out.print(GL11.glGetError());
+    }
+
     public void rebuild( ){
 
+        //preload();
+        //build_chunks_all();
+        unload();
+    }
+
+    public void build_chunks_all(){
+        
         vertex_index = 0;
         VBO_buffer_size = 0;
 
-        preload();
-
-        long vbo_build_start = System.nanoTime();
-        
-        
         for (int x = Map.cluster_x; x< Map.cluster_x+Map.cluster_size; x++)
         for (int y = Map.cluster_y; y< Map.cluster_y+Map.cluster_size; y++)
         for (int z = Map.cluster_z; z< Map.cluster_z+Map.cluster_size; z++)
         {
             build_chunk(x,y,z);
         }
-
-        unload();
-
-        System.out.println("VBO buffer: " + Integer.toString(VBO_buffer_size)+ " vertex");
-        System.out.println("VBO buffer: " + Integer.toString(VBO_buffer_size/24)+ " tileset");
-
-        System.out.println(
-                Integer.toString(
-                        (int)(
-                            ( System.nanoTime() - vbo_build_start ) / (1000*1000)
-                        )
-                ) + " ms elasped"
-        ); //in ms
     }
 
 
@@ -159,7 +233,7 @@ public class VBO {
         for (int y=chunk_y*CS; y < (chunk_y+1)*CS; y++)
         for (int z=chunk_z*CS; z < (chunk_z+1)*CS; z++)
         {
-            
+
                     __tile = __map.get_tile(x, y, z);
                     if (__tile != null)
                     {
@@ -179,14 +253,14 @@ public class VBO {
                         if ( (__map.get_tile(x+1,y,z)) != null){
                             __tile.rv = false;
                         }
-                        
+
                         if ( (__map.get_tile(x,y-1,z)) != null){
                             __tile.bv = false;
                         }
                         if ( (__map.get_tile(x,y+1,z)) != null){
                             __tile.tv = false;
                         }
-                        
+
 
                         voxel_render.set_origin(x, y, z);
                         voxel_render.tile_id = __tile.tile_type;
@@ -211,18 +285,22 @@ public class VBO {
     public void render(){
         if (texture != null){
             texture.bind();
-        }else{
-            //System.out.println("Panic flee!");
         }
+        
+        if (vboid_data == 0 || vboid_index == 0){
+            return;
+        }
+
+
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboid_data);
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboid_index);
-        
+
         int stride = (3+2) * 4;   //3 vertex + 2 texture
-        
+
         int offset = 0 * 4;
         GL11.glVertexPointer(3,GL11.GL_FLOAT, stride, offset);
 

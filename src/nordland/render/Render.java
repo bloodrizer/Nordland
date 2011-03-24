@@ -21,6 +21,8 @@ import nordland.ent.Entity;
 
 import java.nio.FloatBuffer;
 
+import nordland.threads.VBO_rebuild_thread;
+
 
 
 /**
@@ -67,7 +69,7 @@ public class Render {
         initGL();
 
         vbo.init();
-        vbo.rebuild();
+        vbo.rebuild_buffer();
 
         voxel_render = new Voxel(0.0f, 0.0f, 0.0f);
         voxel_render.init();
@@ -101,7 +103,14 @@ public class Render {
     public void rebuild_vbo() {
 
         if (dirty){
-            vbo.rebuild();
+             //vbo.rebuild();
+            
+             vbo.rebuild_buffer();
+
+             VBO_rebuild_thread r = new VBO_rebuild_thread();
+             Thread vbo_rebuild_thread = new Thread(r, "vbo_rebuild");
+             vbo_rebuild_thread.start();
+             
         }
         dirty = false;
     }

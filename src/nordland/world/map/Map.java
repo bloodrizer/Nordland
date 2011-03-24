@@ -7,7 +7,7 @@ import nordland.util.math.Vector3;
 
 
 import nordland.world.map.gen.Perlin;
-import threads.WorldBuilder;
+import nordland.threads.WorldBuilder;
 
 /**
  *

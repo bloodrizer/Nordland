@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package threads;
+package nordland.threads;
 
 import nordland.render.Render;
 import nordland.world.map.Map;
