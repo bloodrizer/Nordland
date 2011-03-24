@@ -117,5 +117,4 @@ public final class Vector3 {
 	public String toString() {
 		return "Vector3 [" + x + ", " + y + ", " + z + "]";
 	}
-
 }

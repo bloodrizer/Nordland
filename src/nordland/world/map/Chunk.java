@@ -13,7 +13,7 @@ public class Chunk {
 
     public static final int CHUNK_SIZE = 32;
 
-
+    public boolean dirty = true;
 
 
     public void load(){

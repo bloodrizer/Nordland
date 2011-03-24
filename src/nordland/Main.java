@@ -96,7 +96,7 @@ public class Main {
       Mouse.setGrabbed(true);
 
       
-      WORLD.rebuild();   //строка Б
+      WORLD.start();
 
 
       //player generation and shit
@@ -160,6 +160,8 @@ public class Main {
 
             player.move_to(camera.get_V3position());
 
+
+            RENDER.rebuild_vbo();   //check if vbo is mareked as dirty and rebuild it
             RENDER.render_world();
             RENDER.render_entity(player);
             RENDER.render_overlay();

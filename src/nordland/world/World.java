@@ -24,10 +24,17 @@ public class World {
 
     public static Map game_map = new Map();
 
+    public static void start(){
+        
+        game_map.world_builder.start();
+        //Render.vbo.rebuild();
+        
+        //rebuild();
+    }
+    
     public static void rebuild()
     {
-        game_map.build_all();
-        Render.vbo.rebuild();
+        game_map.rebuild();
     }
 
 }

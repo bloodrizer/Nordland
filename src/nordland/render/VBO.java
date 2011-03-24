@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author Red
  */
 public class VBO {
-   
+
     int vboid_data = 0;
     int vboid_index = 0;
 
@@ -47,6 +47,7 @@ public class VBO {
     public int vertex_index = 0;
 
     public Texture texture;
+
 
     public void init(){
         
@@ -70,6 +71,10 @@ public class VBO {
 
     //--------------------------------------------------------------------------
     public void preload(){
+
+        if (GLContext.getCapabilities() == null){
+            System.exit(0);
+        }
 
         if (vboid_data != 0){
             ARBVertexBufferObject.glDeleteBuffersARB(vboid_data);
@@ -127,20 +132,6 @@ public class VBO {
         {
             build_chunk(x,y,z);
         }
-        //build_chunk(Map.cluster_x,Map.cluster_y,Map.cluster_z);
-       
-
-        //build_chunk(Map.cluster_x+1,1,Map.cluster_z+1);
-
-        /*build_chunk(1,-1,0);
-        
-        build_chunk(0,-1, 1);
-        build_chunk(1,-1, 1);*/
-        /*for (int x = Map.viewport_x-4; x<= Map.viewport_x-2; x++)
-        for (int y = -2; y<= 0; y++)
-        for (int z = Map.viewport_z-4; z<= Map.viewport_z-2; z++){
-            build_chunk(x, y, z);
-        }*/
 
         unload();
 

@@ -41,6 +41,12 @@ public class Render {
 
     public Voxel voxel_render ;
 
+
+    private static boolean dirty = false;
+    public synchronized static void invalidate_vbo(){
+        dirty = true;
+    }
+
     private Render() {
 
     }
@@ -93,8 +99,11 @@ public class Render {
     //public static Tile[][][] tiles = new Tile[200][200][200];
 
     public void rebuild_vbo() {
-        
-         vbo.rebuild();
+
+        if (dirty){
+            vbo.rebuild();
+        }
+        dirty = false;
     }
 
 
