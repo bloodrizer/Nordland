@@ -30,7 +30,6 @@ public class Map {
     public static final int __CHUNK_SIZE = Chunk.CHUNK_SIZE;
     public static final int buff_size = cluster_size*__CHUNK_SIZE;
 
-    public static final int buff_size = cluster_size*__CHUNK_SIZE;
     public static Tile[][][] tiles = new Tile[buff_size][buff_size][buff_size];
 
 
@@ -128,7 +127,7 @@ public class Map {
                     // java.lang.Math.random() > 0.01 &&
 
 
-                    height = Perlin.getHeight(x, z, 0);
+                    //height = Perlin.getHeight(x, z, 0);
                      
 
                     if ( y < height ) {

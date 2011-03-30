@@ -26,14 +26,15 @@ import org.newdawn.slick.opengl.TextureLoader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import nordland.util.NLTimer;
+import org.lwjgl.opengl.GL20;
 /**
  *
  * @author Red
  */
 public class VBO {
 
-    int vboid_data = 0;
-    int vboid_index = 0;
+    
 
     static int totalNumberOfAxis = 3;
     static int floatSize = 4;
@@ -41,12 +42,38 @@ public class VBO {
     int vertexIndexSize = 4;
     int totalVertecies = 4;
 
-    public volatile ByteBuffer vertexPositionAttributes = null;
-    public volatile ByteBuffer vertexIndecies = null;
+    public static final int vbo_framebuffer_size = 2;
+    public static volatile int framebuffer_id = 0;
+
+    int[] vboid_data  = new int[vbo_framebuffer_size];
+    int[] vboid_index = new int[vbo_framebuffer_size];
+
+    public static volatile ByteBuffer[] vertexPositionAttributes    = new ByteBuffer[vbo_framebuffer_size];
+    public static volatile ByteBuffer[] vertexIndecies              = new ByteBuffer[vbo_framebuffer_size];
 
     public int vertex_index = 0;
 
     public Texture texture;
+
+    public static int get_framebuffer_inactive(){
+        int id = framebuffer_id + 1;
+        if (id >= vbo_framebuffer_size){
+            id = 0;
+        }
+
+        return id;
+        //return framebuffer_id;
+    }
+
+    public ByteBuffer get_vpa(){
+        int fbi = get_framebuffer_inactive();
+        return vertexPositionAttributes[fbi];
+    }
+
+    public ByteBuffer get_vi(){
+        int fbi = get_framebuffer_inactive();
+        return vertexIndecies[fbi];
+    }
 
 
     public void init(){
@@ -58,40 +85,38 @@ public class VBO {
         }
     }
 
-    public static final  int VBO_max_buffer_size = 32*32*32 * 4 * 6 ;
+    //32*32*32 * 4 * 6
+    public static final  int VBO_max_buffer_size = 5000 * 4 * 6;
     public static int       VBO_buffer_size = 0;
 
     public static int createVBOID() {
         return ARBVertexBufferObject.glGenBuffersARB();
     }
 
-    //prepair VBO buffer, map it and get a pointer to it
-
-    public static ByteBuffer precache_bufferData(int vbo_id, int TYPE, int size) {
-        ARBVertexBufferObject.glBindBufferARB(TYPE, vbo_id);
-        ARBVertexBufferObject.glBufferDataARB(TYPE, size, ARBVertexBufferObject.GL_STATIC_DRAW_ARB);
-
-        return  ARBVertexBufferObject.glMapBufferARB( TYPE, ARBVertexBufferObject.GL_WRITE_ONLY_ARB, size, null);
-    }
-
-    //bu
+  
     public static void process_bufferData(int vbo_id, int TYPE, ByteBuffer buffer){
         ARBVertexBufferObject.glBindBufferARB(TYPE, vbo_id);
+        NLTimer.pop("glBindBufferARB");
+        
         ARBVertexBufferObject.glBufferDataARB(TYPE, buffer, ARBVertexBufferObject.GL_STATIC_DRAW_ARB);
+        NLTimer.pop("glBufferDataARB");
+
+        //7 ms flickering there
     }
 
     //--------------------------------------------------------------------------
     //  Обновить vbo из нового буфера
     //--------------------------------------------------------------------------
 
-
-    ByteBuffer buff_data    = ByteBuffer.allocate(vertexPositionAttributeSize *VBO_max_buffer_size);
-    ByteBuffer buff_index   = ByteBuffer.allocate(vertexIndexSize * VBO_max_buffer_size);
+    /*ByteBuffer buff_data    = ByteBuffer.allocate(vertexPositionAttributeSize *VBO_max_buffer_size);
+    ByteBuffer buff_index   = ByteBuffer.allocate(vertexIndexSize * VBO_max_buffer_size);*/
 
     public static boolean vbo_invalidate = false;
 
     public void update_vbo_buffer(){
 
+        int ifb_id = get_framebuffer_inactive();
+        
         if (vbo_invalidate == false){
             return;
         }else{
@@ -100,112 +125,40 @@ public class VBO {
         
         //if new buffer generated
 
-        if (vboid_data == 0){
-            vboid_data  =   createVBOID();
-        }
-        if (vboid_index == 0){
-            vboid_index  =   createVBOID();
-        }
+        
 
-        /*if (vboid_data != 0){
-            ARBVertexBufferObject.glDeleteBuffersARB(vboid_data);
+        if (vboid_data[ifb_id] == 0){
+            vboid_data[ifb_id]  =   createVBOID();
         }
-        if (vboid_index != 0){
-            ARBVertexBufferObject.glDeleteBuffersARB(vboid_index);
+        if (vboid_index[ifb_id] == 0){
+            vboid_index[ifb_id]  =   createVBOID();
         }
 
-        vboid_data  =   createVBOID();
-        vboid_index =   createVBOID();*/
+        NLTimer.push();
+        process_bufferData(vboid_data[ifb_id],  ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vertexPositionAttributes[ifb_id]);
+        NLTimer.pop("streamed vboid_data");
 
-        //ByteBuffer vertexPositionAttributes = null;
-        //ByteBuffer vertexIndecies = null;
+        process_bufferData(vboid_index[ifb_id], ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vertexIndecies[ifb_id]);
+        NLTimer.pop("streamed vboid_index");
 
-        process_bufferData(vboid_data,  ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB,         vertexPositionAttributes);
-        process_bufferData(vboid_index, ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vertexIndecies);
 
+        framebuffer_id = get_framebuffer_inactive();    //<<< swap buffer
         vbo_invalidate = false;
     }
 
 
-
-
-
-
-
-    //--------------------------------------------------------------------------
-    /*public void preload(){
-       
-        if (vboid_data != 0){
-            ARBVertexBufferObject.glDeleteBuffersARB(vboid_data);
-        }
-        if (vboid_index != 0){
-            ARBVertexBufferObject.glDeleteBuffersARB(vboid_index);
-        }
-
-        vboid_data  =   createVBOID();
-        vboid_index = createVBOID();
-
-        vertexPositionAttributes    = precache_bufferData( vboid_data,
-                ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vertexPositionAttributeSize * VBO_max_buffer_size);
-        if (vertexPositionAttributes == null){
-            System.out.println("Failed to create vertex buffer");
-            System.out.println(GL11.glGetError());
-            return;
-        }
-
-
-        //----------------------------------------------------------------------
-        vertexIndexSize = 4;
-        vertexIndecies = precache_bufferData(vboid_index,
-                ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB,vertexIndexSize * VBO_max_buffer_size
-                );
-
-
-        try {
-            texture = TextureLoader.getTexture("PNG", new FileInputStream("Data/terrain.png"));
-        }
-        catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }*/
-
-
-
     static Voxel voxel_render = new Voxel(0,0,0);
-
-
 
     //rebuild VBO data based on current visible area
 
     public void rebuild_buffer( ){
 
-        vertexPositionAttributes   = ByteBuffer.
+        vertexPositionAttributes[get_framebuffer_inactive()]   = ByteBuffer.
                 allocateDirect(vertexPositionAttributeSize * VBO_max_buffer_size).
                 order(ByteOrder.nativeOrder());
-        vertexIndecies             = ByteBuffer.
+        vertexIndecies[get_framebuffer_inactive()]             = ByteBuffer.
                 allocateDirect(vertexIndexSize * VBO_max_buffer_size).
                 order(ByteOrder.nativeOrder());
-
-        //vertexPositionAttributes.clear();
-        //vertexIndecies.clear();
-
-        /*build_chunks_all();
-        vbo_invalidate = true;
-
-        vertexPositionAttributes.flip();
-        vertexIndecies.flip();*/
-
-
-        //update_vbo_buffer();
-
-        //System.out.print(GL11.glGetError());
-    }
-
-    public void rebuild( ){
-
-        //preload();
-        //build_chunks_all();
-        unload();
     }
 
     public void build_chunks_all(){
@@ -229,35 +182,44 @@ public class VBO {
         Map __map = World.game_map;
         int CS = Map.__CHUNK_SIZE;
 
+        int max_x = (Map.cluster_x+Map.cluster_size)*CS;
+        int max_y = (Map.cluster_y+Map.cluster_size)*CS;
+        int max_z = (Map.cluster_z+Map.cluster_size)*CS;
+
+        int min_x = (Map.cluster_x)*CS;
+        int min_y = (Map.cluster_y)*CS;
+        int min_z = (Map.cluster_z)*CS;
+
         for (int x=chunk_x*CS; x < (chunk_x+1)*CS; x++)
         for (int y=chunk_y*CS; y < (chunk_y+1)*CS; y++)
         for (int z=chunk_z*CS; z < (chunk_z+1)*CS; z++)
         {
-
                     __tile = __map.get_tile(x, y, z);
                     if (__tile != null)
                     {
 
                         //f k l r t b
-
-                        if ( (__map.get_tile(x,y,z+1)) != null){
-                            __tile.fv = false;
-                        }
-                        if ( (__map.get_tile(x,y,z-1)) != null){
+                        //------------------------ Z ---------------------------
+                        if ( (z == min_z) || (__map.get_tile(x,y,z-1)) != null){
                             __tile.kv = false;
                         }
-
-                        if ( (__map.get_tile(x-1,y,z)) != null){
+                        if ( (z == max_z-1) || (__map.get_tile(x,y,z+1)) != null){
+                            __tile.fv = false;
+                        }
+                        
+                        //------------------------ X ---------------------------
+                        if ( (x == min_x) || (__map.get_tile(x-1,y,z)) != null){
                             __tile.lv = false;
                         }
-                        if ( (__map.get_tile(x+1,y,z)) != null){
+                        if ( (x == max_x-1) || (__map.get_tile(x+1,y,z)) != null){
                             __tile.rv = false;
                         }
 
-                        if ( (__map.get_tile(x,y-1,z)) != null){
+                        //------------------------ Y ---------------------------
+                        if ( (y == min_y) || (__map.get_tile(x,y-1,z)) != null){
                             __tile.bv = false;
                         }
-                        if ( (__map.get_tile(x,y+1,z)) != null){
+                        if ( (y == max_y-1) ||(__map.get_tile(x,y+1,z)) != null){
                             __tile.tv = false;
                         }
 
@@ -269,35 +231,20 @@ public class VBO {
         }
     }
 
-    public void unload(){
-
-        vertexPositionAttributes.flip();
-        ARBVertexBufferObject.glUnmapBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB);
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, 0);
-
-        vertexIndecies.flip();
-        ARBVertexBufferObject.glUnmapBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB);
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-
-    }
-
-
     public void render(){
         if (texture != null){
             texture.bind();
         }
         
-        if (vboid_data == 0 || vboid_index == 0){
+        if (vboid_data[framebuffer_id] == 0 || vboid_index[framebuffer_id] == 0){
             return;
         }
-
-
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboid_data);
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboid_index);
+        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboid_data[framebuffer_id]);
+        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboid_index[framebuffer_id]);
 
         int stride = (3+2) * 4;   //3 vertex + 2 texture
 

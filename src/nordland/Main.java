@@ -177,7 +177,7 @@ public class Main {
                         (int)cursor.x, (int)cursor.y-1, (int)cursor.z
                 );
 
-                Render.vbo.rebuild();
+                //Render.vbo.rebuild();
             }
             if (Mouse.isButtonDown(0))
             {
@@ -185,7 +185,7 @@ public class Main {
                         (int)cursor.x, (int)cursor.y-1, (int)cursor.z
                 );
 
-                Render.vbo.rebuild();
+                //Render.vbo.rebuild();
             }
 
           
