@@ -159,17 +159,17 @@ public class Voxel {
 
         //if (_vbo.vertexPositionAttributes != null) {
             
-         _vbo.vertexPositionAttributes.putFloat(x);
-         _vbo.vertexPositionAttributes.putFloat(y);
-         _vbo.vertexPositionAttributes.putFloat(z);
+         _vbo.get_vpa().putFloat(x);
+         _vbo.get_vpa().putFloat(y);
+         _vbo.get_vpa().putFloat(z);
 
-         _vbo.vertexPositionAttributes.putFloat(tx);
-         _vbo.vertexPositionAttributes.putFloat(ty);
+         _vbo.get_vpa().putFloat(tx);
+         _vbo.get_vpa().putFloat(ty);
 
        //}
 
 
-         _vbo.vertexIndecies.putInt(_vbo.vertex_index++);
+         _vbo.get_vi().putInt(_vbo.vertex_index++);
 
          _vbo.VBO_buffer_size++;
     }

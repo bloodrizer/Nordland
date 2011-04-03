@@ -127,7 +127,7 @@ public class Map {
                     // java.lang.Math.random() > 0.01 &&
 
 
-                    height = Perlin.getHeight(x, z, 0);
+                    //height = Perlin.getHeight(x, z, 0);
                      
 
                     if ( y < height ) {

@@ -19,10 +19,10 @@ public class VBO_rebuild_thread implements Runnable{
 
         try {
             Render.vbo.build_chunks_all();
+            Render.vbo.get_vpa().flip();
+            Render.vbo.get_vi().flip();
+            
             Render.vbo.vbo_invalidate = true;
-
-            Render.vbo.vertexPositionAttributes.flip();
-            Render.vbo.vertexIndecies.flip();
         }
         catch(Exception e){
             e.printStackTrace();

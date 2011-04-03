@@ -6,6 +6,7 @@
 package nordland.threads;
 
 import nordland.render.Render;
+import nordland.util.NLTimer;
 import nordland.world.map.Map;
 
 /**
@@ -29,6 +30,8 @@ public class WorldBuilder implements Runnable{
 
             boolean vbo_valid = true;
 
+            NLTimer.push();
+
             for (int i = 0; i< Map.cluster_size; i++)
             for (int j = 0; j< Map.cluster_size; j++)
             for (int k = 0; k< Map.cluster_size; k++){
@@ -41,8 +44,11 @@ public class WorldBuilder implements Runnable{
                 }
             }
 
+            
+
             //We can not rebuild vbo directly as it is only allowed to access it in the main thread
             if (!vbo_valid){
+                NLTimer.pop("map rebuilding");
                 Render.invalidate_vbo();
             }
 
