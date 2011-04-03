@@ -110,7 +110,7 @@ public class Map {
 
     }
 
-    public static void build_tile(int x, int y, int z){
+    public static synchronized void build_tile(int x, int y, int z){
          Vector3 origin;
          float height = 0.0f;
 

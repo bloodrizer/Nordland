@@ -142,17 +142,22 @@ public class Render {
     }
 
 
-    private float lightAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    private float lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f }; 
-    private float lightPosition[] = { 1.0f, 1.0f, 0.0f, 0.1f };
-    float lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    private float lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    //private float lightAmbient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+
+    private float lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    //private float lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    private float lightPosition[] = { 30.0f, 30.0f, 30.0f, 0.0f };
+    
+    float lightSpecular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
     public void render_world() {
         
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
     GL11.glTranslatef(0.0f,-2.0f,0.0f);                              // Move Into The Screen 5 Units
 
-    /*ByteBuffer temp = ByteBuffer.allocateDirect(16);
+    ByteBuffer temp = ByteBuffer.allocateDirect(16);
     temp.order(ByteOrder.nativeOrder());
     GL11.glLight(GL11.GL_LIGHT1, GL11.GL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(lightAmbient).flip());
     GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(lightDiffuse).flip());
@@ -161,7 +166,7 @@ public class Render {
     GL11.glEnable(GL11.GL_LIGHTING);
 
     GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-    GL11.glColorMaterial ( GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE ) ;*/
+    GL11.glColorMaterial ( GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE ) ;
 
         vbo.render();
         
@@ -185,6 +190,8 @@ public class Render {
         voxel_render.tile_id = 6;
         voxel_render.set_origin((int)wx , (int)wy-1, (int)wz);
         voxel_render.render();
+
+    GL11.glDisable(GL11.GL_LIGHTING);
 
     }
 
