@@ -23,6 +23,7 @@ public class VBO_rebuild_thread implements Runnable{
             Render.vbo.get_vi().flip();
             
             Render.vbo.vbo_invalidate = true;
+            //Render.vbo.update_vbo_buffer();
         }
         catch(Exception e){
             e.printStackTrace();

@@ -45,8 +45,10 @@ public class VBO {
     public static final int vbo_framebuffer_size = 2;
     public static volatile int framebuffer_id = 0;
 
-    int[] vboid_data  = new int[vbo_framebuffer_size];
-    int[] vboid_index = new int[vbo_framebuffer_size];
+    static int[] vboid_data  = new int[vbo_framebuffer_size];
+    static int[] vboid_index = new int[vbo_framebuffer_size];
+
+    public static int[] VBO_buffer_size = new int[vbo_framebuffer_size];
 
     public static volatile ByteBuffer[] vertexPositionAttributes    = new ByteBuffer[vbo_framebuffer_size];
     public static volatile ByteBuffer[] vertexIndecies              = new ByteBuffer[vbo_framebuffer_size];
@@ -86,8 +88,8 @@ public class VBO {
     }
 
     //32*32*32 * 4 * 6
-    public static final  int VBO_max_buffer_size = 5000 * 4 * 6;
-    public static int       VBO_buffer_size = 0;
+    public static final  int VBO_max_buffer_size = 64000 * 4 * 6;
+    
 
     public static int createVBOID() {
         return ARBVertexBufferObject.glGenBuffersARB();
@@ -135,11 +137,12 @@ public class VBO {
         }
 
         NLTimer.push();
+        process_bufferData(vboid_index[ifb_id], ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vertexIndecies[ifb_id]);
+        NLTimer.pop("streamed vboid_index");
+
         process_bufferData(vboid_data[ifb_id],  ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vertexPositionAttributes[ifb_id]);
         NLTimer.pop("streamed vboid_data");
 
-        process_bufferData(vboid_index[ifb_id], ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vertexIndecies[ifb_id]);
-        NLTimer.pop("streamed vboid_index");
 
 
         framebuffer_id = get_framebuffer_inactive();    //<<< swap buffer
@@ -153,10 +156,12 @@ public class VBO {
 
     public void rebuild_buffer( ){
 
-        vertexPositionAttributes[get_framebuffer_inactive()]   = ByteBuffer.
+        int ifb_id = get_framebuffer_inactive();
+
+        vertexPositionAttributes[ifb_id]   = ByteBuffer.
                 allocateDirect(vertexPositionAttributeSize * VBO_max_buffer_size).
                 order(ByteOrder.nativeOrder());
-        vertexIndecies[get_framebuffer_inactive()]             = ByteBuffer.
+        vertexIndecies[ifb_id]             = ByteBuffer.
                 allocateDirect(vertexIndexSize * VBO_max_buffer_size).
                 order(ByteOrder.nativeOrder());
     }
@@ -164,7 +169,7 @@ public class VBO {
     public void build_chunks_all(){
         
         vertex_index = 0;
-        VBO_buffer_size = 0;
+        VBO_buffer_size[get_framebuffer_inactive()] = 0;
 
         for (int x = Map.cluster_x; x< Map.cluster_x+Map.cluster_size; x++)
         for (int y = Map.cluster_y; y< Map.cluster_y+Map.cluster_size; y++)
@@ -195,31 +200,31 @@ public class VBO {
         for (int z=chunk_z*CS; z < (chunk_z+1)*CS; z++)
         {
                     __tile = __map.get_tile(x, y, z);
-                    if (__tile != null)
+                    if (!Tile.empty(__tile))
                     {
 
                         //f k l r t b
                         //------------------------ Z ---------------------------
-                        if ( (z == min_z) || (__map.get_tile(x,y,z-1)) != null){
+                        if ( (z == min_z) || (!__map.empty(x,y,z-1))){
                             __tile.kv = false;
                         }
-                        if ( (z == max_z-1) || (__map.get_tile(x,y,z+1)) != null){
+                        if ( (z == max_z-1) || (!__map.empty(x,y,z+1))){
                             __tile.fv = false;
                         }
                         
                         //------------------------ X ---------------------------
-                        if ( (x == min_x) || (__map.get_tile(x-1,y,z)) != null){
+                        if ( (x == min_x) || (!__map.empty(x-1,y,z))){
                             __tile.lv = false;
                         }
-                        if ( (x == max_x-1) || (__map.get_tile(x+1,y,z)) != null){
+                        if ( (x == max_x-1) || (!__map.empty(x+1,y,z))){
                             __tile.rv = false;
                         }
 
                         //------------------------ Y ---------------------------
-                        if ( (y == min_y) || (__map.get_tile(x,y-1,z)) != null){
+                        if ( (y == min_y) || (!__map.empty(x,y-1,z))){
                             __tile.bv = false;
                         }
-                        if ( (y == max_y-1) ||(__map.get_tile(x,y+1,z)) != null){
+                        if ( (y == max_y-1) ||(!__map.empty(x,y+1,z))){
                             __tile.tv = false;
                         }
 
@@ -254,7 +259,7 @@ public class VBO {
         // 3 vertex coord * size of float
         offset = 3 * 4;
         GL11.glTexCoordPointer(2, GL11.GL_FLOAT, stride, offset);
-        GL11.glDrawElements(GL11.GL_QUADS, VBO_buffer_size, GL11.GL_UNSIGNED_INT,0);
+        GL11.glDrawElements(GL11.GL_QUADS, VBO_buffer_size[framebuffer_id], GL11.GL_UNSIGNED_INT,0);
 
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, 0);
 	ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);

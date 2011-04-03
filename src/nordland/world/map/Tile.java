@@ -44,6 +44,10 @@ public class Tile {
     }
 
     public static boolean empty(Tile tile){
-        return (tile == null || tile.tile_type == 0);
+        return (tile == null || tile.tile_type == -1);
+    }
+
+    public void drop(){
+        tile_type = -1;
     }
 }

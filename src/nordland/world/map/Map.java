@@ -10,6 +10,7 @@ import nordland.util.math.Vector3;
 
 import nordland.world.map.gen.Perlin;
 import nordland.threads.WorldBuilder;
+import nordland.world.map.gen.Heightmap;
 
 /**
  *
@@ -86,6 +87,8 @@ public class Map {
     }
 
     public void rebuild(){
+        System.out.println("rebuilding world geometry");
+
         for (int i = 0; i< Map.cluster_size; i++)
         for (int j = 0; j< Map.cluster_size; j++)
         for (int k = 0; k< Map.cluster_size; k++){
@@ -98,57 +101,58 @@ public class Map {
 
     public static void build_chunk(int i, int j, int k){
 
-         System.out.println("Building chunk @"
-                   +Integer.toString(i)+
-                ","+Integer.toString(j)+
-                ","+Integer.toString(k)
-                );
-
-        float height = 0.0f;
-
         for (int x= i*__CHUNK_SIZE; x< (i+1)*__CHUNK_SIZE; x++)
         for (int y= j*__CHUNK_SIZE; y< (j+1)*__CHUNK_SIZE; y++)
         for (int z= k*__CHUNK_SIZE; z< (k+1)*__CHUNK_SIZE; z++)
         {
-
-                    Vector3 origin;
-
-                    if (USE_HASHMAP){
-                       origin  = new Vector3(x,y,z);
-                    }else{
-                       origin  = util_v3.set(x,y,z);
-                    }
-
-                    //origin.set(x,y,z);
-                    //w_origin.set(x,y,z);
-                    //Vector3.util_vec3.set(V3world2local(origin));
-
-                    //add some debug clusterisation there
-                    // java.lang.Math.random() > 0.01 &&
-
-
-                    //height = Perlin.getHeight(x, z, 0);
-                     
-
-                    if ( y < height ) {
-
-                        
-                        Tile tmp_tile = new Tile(origin);
-                        set_tile(origin, tmp_tile);
-
-                        tile_count++;
-                   }else{
-                        set_tile(origin, null);
-                   }
-       }
+            build_tile(x,y,z);
+        }
 
     }
 
+    public static void build_tile(int x, int y, int z){
+         Vector3 origin;
+         float height = 0.0f;
 
-    public static synchronized void set_tile(Vector3 origin, Tile tile){
+         if (USE_HASHMAP){
+             origin  = new Vector3(x,y,z);
+         }else{
+             origin  = util_v3.set(x,y,z);
+         }
 
-        //Vector3 _origin = V3world2local(origin);
-        origin = V3world2local(origin);
+         height = Heightmap.get_height(x, z);
+         Tile tmp_tile = get_tile(x,y,z);   //careful, it will switch util_v3 AND origin to local view
+
+         if (tmp_tile != null){
+             tmp_tile.v_reset();
+         }
+
+         if ( y < height ) {
+            if (tmp_tile == null){
+
+               tmp_tile = new Tile(origin);
+               set_tile(origin, tmp_tile);
+
+             }else{
+                 tiles[origin.x][origin.y][origin.z].tile_type = 1;
+             }
+
+             tile_count++;
+
+           }else{
+               if (tmp_tile != null){
+                   tmp_tile.drop();
+               }
+           }
+    }
+
+
+    public static void set_tile_world(Vector3 origin, Tile tile){
+        Vector3 __origin = V3world2local(origin);
+        set_tile(__origin,tile);
+    }
+
+    public static void set_tile(Vector3 origin, Tile tile){
 
         if (USE_HASHMAP){
             hash_tiles.put(origin, tile);
@@ -166,15 +170,20 @@ public class Map {
         }
     }
 
+    public static Tile safe_get_tile(int x, int y, int z){
+        Tile __result = get_tile(x,y,z);
+        util_v3.set(x,y,z);
+
+        return __result;
+    }
+
     public static Tile get_tile( int x, int y, int z ) {
 
         util_v3.set(x,y,z);
         util_v3 = V3world2local(util_v3);
 
-
         if (util_v3.x<0 || util_v3.y<0 || util_v3.z<0)
            return null;
-
 
         if (util_v3.x>=buff_size || util_v3.y>=buff_size || util_v3.z>=buff_size)
            return null;
@@ -184,31 +193,27 @@ public class Map {
         }else{
             return tiles[util_v3.x][util_v3.y][util_v3.z];
         }
-        //return null;
+    }
 
+    public boolean empty(int x, int y, int z){
+        Tile __tile = get_tile(x,y,z);
+
+        return Tile.empty(__tile);
 
     }
 
-
-    public void drop_tile( int x, int y, int z) {
-
-        Tile tile = null;
-
+    public static void drop_tile_world( int x, int y, int z) {
         util_v3.set(x,y,z);
         util_v3 = V3world2local(util_v3);
-
         x = util_v3.x;
         y = util_v3.y;
         z = util_v3.z;
+        drop_tile(x,y,z);
+    }
 
-        System.out.println("clearing tile @ "+ Integer.toString(x) + "," + Integer.toString(y) + "," + Integer.toString(z));
-        
-        /*Tile __tyle;
+    public static void drop_tile( int x, int y, int z) {
 
-        if ((__tyle = tiles.get(util_v3)) != null){
-            //__tyle.tile_type = 0;
-            __tyle = null;
-        }*/
+        //System.out.println("clearing tile @ "+ Integer.toString(x) + "," + Integer.toString(y) + "," + Integer.toString(z));
 
         if ((tiles[x][y][z]) != null){
 
@@ -225,7 +230,7 @@ public class Map {
             if (tiles[x][y][z-1] != null)
                 tiles[x][y][z-1].v_reset();
 
-            tiles[x][y][z] = null;
+            tiles[x][y][z].drop();
         }
       
     }

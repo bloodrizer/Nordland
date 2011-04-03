@@ -150,7 +150,7 @@ public class Voxel {
 
     public void put_vertex(float x, float y, float z, float tx, float ty){
 
-        if (_vbo.VBO_buffer_size >= _vbo.VBO_max_buffer_size){
+        if (_vbo.VBO_buffer_size[_vbo.get_framebuffer_inactive()] >= _vbo.VBO_max_buffer_size){
             return; //safe switch
         }
 
@@ -171,7 +171,7 @@ public class Voxel {
 
          _vbo.get_vi().putInt(_vbo.vertex_index++);
 
-         _vbo.VBO_buffer_size++;
+         _vbo.VBO_buffer_size[_vbo.get_framebuffer_inactive()]++;
     }
 
     public void render(){

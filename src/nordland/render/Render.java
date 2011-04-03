@@ -6,6 +6,8 @@
 package nordland.render;
 
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -89,12 +91,36 @@ public class Render {
         GL11.glLoadIdentity();
         GL11.glEnable(GL11.GL_TEXTURE_2D);                                    // Enable Texture Mapping ( NEW )
         GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GL11.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         GL11.glClearDepth(1.0f);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);
 
+        //set_fog();
+
+    }
+
+    void set_fog(){
+        Vector3f fogColor_v3 = new Vector3f(0.5f, 0.5f, 0.5f);
+        float density = 0.02f;
+
+        ByteBuffer fog_color = ByteBuffer.allocateDirect(16).
+                order(ByteOrder.nativeOrder());
+
+        fog_color.asFloatBuffer().
+                put(0.5f).
+                put(0.5f).
+                put(0.5f).
+                flip();
+
+            
+
+        GL11.glEnable(  GL11.GL_FOG);
+        GL11.glFogi(    GL11.GL_FOG_MODE,   GL11.GL_EXP2);
+        GL11.glFog(     GL11.GL_FOG_COLOR,  fog_color.asFloatBuffer());
+        GL11.glFogf(    GL11.GL_FOG_DENSITY,density);
+        GL11.glHint(    GL11.GL_FOG_HINT,   GL11.GL_NICEST);
     }
 
     //==========================================================================
