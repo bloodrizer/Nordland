@@ -24,6 +24,7 @@ import nordland.ent.Entity;
 import java.nio.FloatBuffer;
 
 import nordland.threads.VBO_rebuild_thread;
+import nordland.world.World;
 
 
 
@@ -47,6 +48,8 @@ public class Render {
 
 
     private static boolean dirty = false;
+    public static boolean vbo_locked = false;
+
     public synchronized static void invalidate_vbo(){
         dirty = true;
     }
@@ -126,33 +129,46 @@ public class Render {
     //==========================================================================
     //public static Tile[][][] tiles = new Tile[200][200][200];
 
-    public void rebuild_vbo() {
+    public static synchronized void rebuild_vbo() {
 
-        if (dirty){
-             //vbo.rebuild();
+        if (dirty && !vbo_locked){
+            
+             vbo_locked = true;
+             System.out.println("VBO is marked as dirty, rebuilding...");
             
              vbo.rebuild_buffer();
 
              VBO_rebuild_thread r = new VBO_rebuild_thread();
              Thread vbo_rebuild_thread = new Thread(r, "vbo_rebuild");
              vbo_rebuild_thread.start();
-             
+
         }
-        dirty = false;
+
+        dirty = false;        
     }
 
 
-    private float lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    //private float lightAmbient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    //private float lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    private float lightAmbient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
-    private float lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    //private float lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    private float lightPosition[] = { 30.0f, 30.0f, 30.0f, 0.0f };
+
+    //private float lightAmbient[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+
+    //private float lightDiffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+    private float lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    private float lightPosition[] = { 30.0f, 60.0f, 0.0f, 0.0f };
     
-    float lightSpecular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    float lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     public void render_world() {
+
+    Vector3f sun_color = World.__enviroment.get_sun_color();
+
+    lightAmbient[0] = sun_color.x;
+    lightAmbient[1] = sun_color.y;
+    lightAmbient[2] = sun_color.z;
         
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
     GL11.glTranslatef(0.0f,-2.0f,0.0f);                              // Move Into The Screen 5 Units
@@ -166,7 +182,8 @@ public class Render {
     GL11.glEnable(GL11.GL_LIGHTING);
 
     GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-    GL11.glColorMaterial ( GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE ) ;
+    GL11.glColorMaterial ( GL11.GL_FRONT, GL11.GL_AMBIENT_AND_DIFFUSE ) ;
+    GL11.glMaterialf(  GL11.GL_FRONT, GL11.GL_SHININESS, 100.0f);
 
         vbo.render();
         

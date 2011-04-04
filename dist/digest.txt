@@ -1,3 +1,0 @@
-getdown.txt = 4d7e93dfaa568ca3ed2d4f47feadab7f
-Nordland.jar = 24cf344307666b2e3add4c3fb26cdd34
-digest.txt = 47e7f60b21aa064e6f07863342e77dc2

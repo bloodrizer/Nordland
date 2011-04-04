@@ -9,7 +9,7 @@ import nordland.util.math.Vector3;
 
 
 import nordland.world.map.gen.Perlin;
-import nordland.threads.WorldBuilder;
+import nordland.threads.World_rebuild_thread;
 import nordland.world.map.gen.Heightmap;
 
 /**
@@ -53,7 +53,7 @@ public class Map {
         }
 
 
-        WorldBuilder r = new WorldBuilder();
+        World_rebuild_thread r = new World_rebuild_thread();
         world_builder = new Thread(r, "world_builder");
 
        //world_builder.start();
@@ -128,7 +128,7 @@ public class Map {
          }
 
          if ( y < height ) {
-            if (tmp_tile == null){
+             if (tmp_tile == null){
 
                tmp_tile = new Tile(origin);
                set_tile(origin, tmp_tile);
@@ -235,10 +235,25 @@ public class Map {
       
     }
 
-    public void add_tile(int x, int y, int z) {
-        Vector3 origin = new Vector3(x,y,z);
+    public static synchronized void add_tile(int x, int y, int z) {
+        
+         util_v3.set(x,y,z);
+         util_v3 = V3world2local(util_v3);
+
+         Tile tmp_tile = get_tile(x,y,z);
+         if (tmp_tile == null){
+
+               tmp_tile = new Tile(util_v3);
+               set_tile(util_v3, tmp_tile);
+
+         }else{
+             tiles[x][y][z].tile_type = 1;
+         }
+
+
+        /*Vector3 origin = new Vector3(x,y,z);
         Tile tmp_tile = new Tile(origin);
-        set_tile(origin, tmp_tile);
+        set_tile(origin, tmp_tile);*/
     }
 
 

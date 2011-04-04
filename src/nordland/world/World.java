@@ -15,6 +15,7 @@ import nordland.render.Render;
 public class World {
 
     static World _instance;
+    public static Enviroment __enviroment = new Enviroment();
 
     public static World getInstance() {
         if (_instance == null) {

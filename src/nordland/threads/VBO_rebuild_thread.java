@@ -15,15 +15,14 @@ import org.lwjgl.input.Keyboard;
  */
 public class VBO_rebuild_thread implements Runnable{
     @Override
-    public void run() {
+    public synchronized void run() {
 
         try {
             Render.vbo.build_chunks_all();
             Render.vbo.get_vpa().flip();
             Render.vbo.get_vi().flip();
-            
+
             Render.vbo.vbo_invalidate = true;
-            //Render.vbo.update_vbo_buffer();
         }
         catch(Exception e){
             e.printStackTrace();

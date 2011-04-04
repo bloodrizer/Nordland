@@ -113,6 +113,8 @@ public class Main {
             OverlaySystem.getInstance().debug.shards =
                     RENDER.vbo.VBO_buffer_size[RENDER.vbo.framebuffer_id]/24;
             OverlaySystem.getInstance().debug.max_shards = RENDER.vbo.VBO_max_buffer_size/24;
+            OverlaySystem.getInstance().debug.datetime = WORLD.__enviroment.datetime;
+
 
 
             time = getTime();
@@ -174,11 +176,11 @@ public class Main {
             Vector3f cursor = RENDER.cursor_position;
             if (Mouse.isButtonDown(1))
             {
-                WORLD.game_map.drop_tile(
+                WORLD.game_map.drop_tile_world(
                         (int)cursor.x, (int)cursor.y-1, (int)cursor.z
                 );
 
-                //Render.vbo.rebuild();
+                RENDER.invalidate_vbo();
             }
             if (Mouse.isButtonDown(0))
             {
@@ -186,7 +188,7 @@ public class Main {
                         (int)cursor.x, (int)cursor.y-1, (int)cursor.z
                 );
 
-                //Render.vbo.rebuild();
+                RENDER.invalidate_vbo();
             }
 
           
@@ -194,6 +196,8 @@ public class Main {
           Display.sync(60);
 
         }
+
+        WORLD.__enviroment.stop_timer();
   }
 
   public long getTime() {

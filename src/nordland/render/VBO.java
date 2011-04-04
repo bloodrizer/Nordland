@@ -38,7 +38,7 @@ public class VBO {
 
     static int totalNumberOfAxis = 3;
     static int floatSize = 4;
-    static int vertexPositionAttributeSize = ((3+2) * floatSize);   //3 position coord + 2 texture coord
+    static int vertexPositionAttributeSize = ((3+3+2) * floatSize);   //3 position coord + 3 normal + 2 texture coord
     int vertexIndexSize = 4;
     int totalVertecies = 4;
 
@@ -88,7 +88,7 @@ public class VBO {
     }
 
     //32*32*32 * 4 * 6
-    public static final  int VBO_max_buffer_size = 64000 * 4 * 6;
+    public static final  int VBO_max_buffer_size = 32000 * 4 * 6;
     
 
     public static int createVBOID() {
@@ -147,6 +147,7 @@ public class VBO {
 
         framebuffer_id = get_framebuffer_inactive();    //<<< swap buffer
         vbo_invalidate = false;
+        Render.vbo_locked = false;
     }
 
 
@@ -168,7 +169,6 @@ public class VBO {
 
     public void build_chunks_all(){
         
-        vertex_index = 0;
         VBO_buffer_size[get_framebuffer_inactive()] = 0;
 
         for (int x = Map.cluster_x; x< Map.cluster_x+Map.cluster_size; x++)
@@ -245,26 +245,35 @@ public class VBO {
             return;
         }
 
+        
+        
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboid_data[framebuffer_id]);
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, vboid_index[framebuffer_id]);
 
-        int stride = (3+2) * 4;   //3 vertex + 2 texture
+        int stride = (3+3+2) * 4;   //3 vertex + 2 texture
 
         int offset = 0 * 4;
-        GL11.glVertexPointer(3,GL11.GL_FLOAT, stride, offset);
+        GL11.glVertexPointer(3, GL11.GL_FLOAT, stride, offset);
 
-        // 3 vertex coord * size of float
         offset = 3 * 4;
+        GL11.glNormalPointer(GL11.GL_FLOAT, stride, offset);
+
+        // 3 vertex coord + 3 normal coord * size of float
+        offset = (3+3) * 4;
         GL11.glTexCoordPointer(2, GL11.GL_FLOAT, stride, offset);
         GL11.glDrawElements(GL11.GL_QUADS, VBO_buffer_size[framebuffer_id], GL11.GL_UNSIGNED_INT,0);
 
         ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, 0);
 	ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
+        
+       
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
         GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
     }
 

@@ -5,6 +5,8 @@
 
 package nordland.render.overlay;
 
+import java.util.Calendar;
+import java.util.Locale;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.Color;
 import org.lwjgl.util.vector.Vector3f;
@@ -25,6 +27,8 @@ public class DebugOverlay {
     
     public int shards =0;
     public int max_shards =0;
+
+    public Calendar datetime = null;
     
     public Vector3f    position    = null;
     public Vector3    cluster_position  = new Vector3(0,0,0);
@@ -50,6 +54,8 @@ public class DebugOverlay {
             __font.drawString(10, 110, "CY: " + Integer.toString( cluster_position.y ), Color.white);
             __font.drawString(10, 130, "CZ: " + Integer.toString( cluster_position.z ), Color.white);
         }
+
+        __font.drawString(10, 180, datetime.getTime().toString() );
 
         __font.drawString(320, 240, ".");
     }

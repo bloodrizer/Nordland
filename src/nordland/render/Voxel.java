@@ -97,6 +97,8 @@ public class Voxel {
         //f k l r t b
          //front
          if (tile.fv) {
+             put_normal(0.0f, 0.0f, 0.5f);
+
              put_vertex(-vo + x, -vo + y, vo + z, tx, ty);
              put_vertex( vo + x, -vo + y, vo + z, tx +ts, ty);
              put_vertex( vo + x, vo + y,  vo + z, tx +ts, ty + ts);
@@ -104,6 +106,8 @@ public class Voxel {
         }
          //back
          if (tile.kv) {
+             put_normal(0.0f, 0.0f, -0.5f);
+
              put_vertex(-vo + x, -vo + y,  -vo + z, tx+ts, ty);
              put_vertex(-vo + x,  vo + y,  -vo + z, tx+ts, ty+ts);
              put_vertex( vo + x, vo + y,  -vo + z,  tx,    ty+ts);
@@ -112,6 +116,8 @@ public class Voxel {
 
           //left?
          if (tile.lv) {
+            put_normal(-0.5f, 0.0f, 0.0f);
+
             put_vertex(-vo + x, -vo + y, -vo + z,    tx, ty);
             put_vertex(-vo + x, -vo + y, vo + z,     tx+ts, ty);
             put_vertex(-vo + x, vo + y,  vo + z,     tx+ts, ty+ts);
@@ -120,6 +126,8 @@ public class Voxel {
 
          //*top*
          if (tile.tv) {
+             put_normal(0.0f, 0.5f, 0.0f);
+
              put_vertex(-vo + x, vo + y,  -vo + z, tx , ty+ts);
              put_vertex(-vo + x, vo + y,  vo + z,  tx, ty);
              put_vertex( vo + x, vo + y,  vo + z,  tx+ts, ty);
@@ -129,6 +137,8 @@ public class Voxel {
             
          //*bottom*
          if (tile.bv) {
+            put_normal(0.0f, -0.5f, 0.0f);
+
             put_vertex(-vo + x, -vo + y,  -vo + z, tx+ts, ty+ts);
             put_vertex(vo + x,  -vo + y,  -vo + z, tx, ty+ts);
             put_vertex( vo + x, -vo + y,  vo + z,  tx, ty);
@@ -138,6 +148,8 @@ public class Voxel {
          
          //right
          if (tile.rv) {
+            put_normal(0.5f, 0.0f, 0.0f);
+
             put_vertex(vo + x, -vo + y, -vo + z, tx+ts, ty);
             put_vertex(vo + x, vo + y,  -vo + z, tx+ts, ty+ts);
             put_vertex(vo + x, vo + y,  vo + z,  tx, ty+ts);
@@ -158,10 +170,16 @@ public class Voxel {
         // HACK HACK HACK
 
         //if (_vbo.vertexPositionAttributes != null) {
+
+
             
          _vbo.get_vpa().putFloat(x);
          _vbo.get_vpa().putFloat(y);
          _vbo.get_vpa().putFloat(z);
+
+         _vbo.get_vpa().putFloat(vertex_normal.x);
+         _vbo.get_vpa().putFloat(vertex_normal.y);
+         _vbo.get_vpa().putFloat(vertex_normal.z);
 
          _vbo.get_vpa().putFloat(tx);
          _vbo.get_vpa().putFloat(ty);
@@ -172,6 +190,13 @@ public class Voxel {
          _vbo.get_vi().putInt(_vbo.vertex_index++);
 
          _vbo.VBO_buffer_size[_vbo.get_framebuffer_inactive()]++;
+    }
+
+
+    static Vector3f vertex_normal = new Vector3f(0.0f, 0.0f, 0.0f);
+
+    public void put_normal(float nx, float ny, float nz){
+        vertex_normal.set(nx, ny, nz);
     }
 
     public void render(){

@@ -19,7 +19,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.input.Keyboard;
 
-public class WorldBuilder implements Runnable{
+public class World_rebuild_thread implements Runnable{
     @Override
     public void run() {
 
